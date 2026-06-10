@@ -28,17 +28,16 @@ h1{font-size:20px;font-weight:500;margin-bottom:.25rem}
 .color-jobshadow{background:#C0DD97;color:#27500A}
 .color-teaching{background:#FAC775;color:#633806}
 .color-expert{background:#F4C0D1;color:#72243E}
-.cal{width:100%;border-collapse:collapse;font-size:12px}
-.cal th{padding:6px 4px;text-align:center;font-weight:500;color:#5f5e5a;border-bottom:0.5px solid #d3d1c7;background:#f5f5f3}
-.cal td{padding:3px 4px;vertical-align:top;border:0.5px solid #d3d1c7;height:52px}
-.cal td.month-label{font-size:11px;font-weight:500;color:#5f5e5a;background:#f0efe8;text-align:center;vertical-align:middle;width:56px}
+.cal{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px}
+.cal th{padding:5px 4px;text-align:left;font-weight:500;color:#5f5e5a;border-bottom:0.5px solid #d3d1c7;background:#f0efe8}
+.cal td{padding:3px 5px;vertical-align:middle;border:0.5px solid #d3d1c7}
+.cal tfoot td{font-size:11px;font-weight:500;border-top:0.5px solid #b4b2a9;padding:4px 5px}
 .mob-chip{display:block;border-radius:3px;padding:2px 5px;font-size:11px;margin-bottom:2px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mob-chip:hover{opacity:.75}
 .card{background:#fff;border:0.5px solid #d3d1c7;border-radius:10px;padding:.875rem 1rem;margin-bottom:8px;cursor:pointer}
 .card:hover{border-color:#888780}
 .cluster-tag{font-size:10px;padding:2px 6px;border-radius:12px;background:#f0efe8;color:#5f5e5a;border:0.5px solid #d3d1c7;display:inline-block}
 .cluster-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:.35rem}
-/* Modal */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:999;padding:1rem}
 .modal{background:#fff;border-radius:12px;border:0.5px solid #d3d1c7;padding:1.5rem;width:560px;max-width:100%;max-height:90vh;overflow-y:auto}
 .modal h2{font-size:17px;font-weight:500;margin-bottom:1rem}
@@ -61,53 +60,44 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .checkbox-grid label{display:flex;align-items:flex-start;gap:6px;font-size:12px;color:#1a1a18;cursor:pointer;font-weight:400}
 .checkbox-grid input[type=checkbox]{width:auto;margin-top:2px}
 .close-x{float:right;border:none;background:none;font-size:20px;cursor:pointer;color:#5f5e5a;padding:0;line-height:1}
-.badge-new{font-size:10px;padding:2px 7px;border-radius:10px;background:#E1F5EE;color:#0F6E56;border:0.5px solid #9FE1CB;margin-left:6px;vertical-align:middle}
-/* Export */
 .exp-tabs{display:flex;gap:4px;border-bottom:0.5px solid #d3d1c7;margin-bottom:1rem}
 .exp-tab{font-size:13px;padding:6px 14px;border:0.5px solid transparent;border-bottom:none;border-radius:8px 8px 0 0;cursor:pointer;background:transparent;color:#5f5e5a}
 .exp-tab.active{background:#fff;border-color:#d3d1c7;color:#1a1a18;border-bottom:1px solid #fff;margin-bottom:-1px}
-.exp-section{display:none}
-.exp-section.active{display:block}
+.exp-section{display:none}.exp-section.active{display:block}
 .exp-table{width:100%;border-collapse:collapse;font-size:11px}
-.exp-table th{padding:5px 6px;text-align:left;font-weight:500;color:#5f5e5a;border-bottom:0.5px solid #d3d1c7;white-space:nowrap;background:#f5f5f3}
+.exp-table th{padding:5px 6px;text-align:left;font-weight:500;color:#5f5e5a;border-bottom:0.5px solid #d3d1c7;background:#f5f5f3;white-space:nowrap}
 .exp-table td{padding:5px 6px;border-bottom:0.5px solid #e8e8e4;vertical-align:top}
 .exp-table tfoot td{font-weight:500;border-top:0.5px solid #b4b2a9;padding-top:8px}
 textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;padding:8px;background:#f5f5f3;resize:vertical;border:0.5px solid #b4b2a9;border-radius:8px}
-/* Setup */
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#1a1a18;color:#fff;padding:.6rem 1.2rem;border-radius:8px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
 .setup-box{background:#fff;border-radius:12px;border:0.5px solid #d3d1c7;padding:2rem;max-width:500px;margin:4rem auto}
 .setup-box h2{font-size:18px;font-weight:500;margin-bottom:.5rem}
 .setup-box p{font-size:13px;color:#5f5e5a;margin-bottom:1.25rem;line-height:1.7}
 .setup-box .field{margin-bottom:1rem}
-.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#1a1a18;color:#fff;padding:.6rem 1.2rem;border-radius:8px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
-.toast.show{opacity:1}
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
-@keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:600px){.form-row{grid-template-columns:1fr}.checkbox-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<!-- Setup screen -->
 <div id="setupScreen" style="display:none">
   <div class="setup-box">
     <h2>KA1 Planner — eerste keer instellen</h2>
-    <p>Om data te delen met collega's gebruik je <strong>JSONBin.io</strong> als gratis dataopslag.<br>
-    Maak een gratis account op <a href="https://jsonbin.io" target="_blank">jsonbin.io</a>, maak een nieuwe <em>bin</em> aan en kopieer de <strong>Bin ID</strong> en je <strong>API key</strong> hieronder.<br><br>
-    Stel ook een beheerderswachtwoord in. Collega's met dit wachtwoord kunnen mobilities verwijderen.</p>
+    <p>Maak een gratis account op <a href="https://jsonbin.io" target="_blank">jsonbin.io</a>, maak een nieuwe bin aan met inhoud <code>{"mobilities":[]}</code> en kopieer de <strong>Bin ID</strong> en je <strong>API key</strong> hieronder.</p>
     <div class="field"><label>JSONBin Bin ID</label><input id="s-binid" placeholder="64abc123..."></div>
-    <div class="field"><label>JSONBin API Key (Master key of Access key)</label><input id="s-apikey" type="password" placeholder="$2b$10$..."></div>
-    <div class="field"><label>Beheerderswachtwoord</label><input id="s-adminpw" type="password" placeholder="Kies een wachtwoord"></div>
-    <div class="field"><label>Naam van dit project (optioneel)</label><input id="s-name" placeholder="KA121-2026 Katholiek Onderwijs Vlaanderen"></div>
+    <div class="field"><label>JSONBin API Key</label><input id="s-apikey" type="password" placeholder="$2b$10$..."></div>
+    <div class="field"><label>Beheerderswachtwoord (voor verwijderen)</label><input id="s-adminpw" type="password" placeholder="Kies een wachtwoord"></div>
+    <div class="field"><label>Projectnaam (optioneel)</label><input id="s-name" placeholder="KA121-2026 Katholiek Onderwijs Vlaanderen"></div>
     <button class="primary" onclick="setupSave()" style="width:100%">Opslaan en starten</button>
-    <p style="margin-top:.75rem;font-size:11px;color:#888780">Deze instellingen worden lokaal opgeslagen in je browser. Collega's voeren hun eigen API key in, of je zet de instellingen in de HTML voor een vaste deploymentversie.</p>
   </div>
 </div>
 
-<!-- Main app -->
 <div id="app" style="display:none">
 <div class="container">
   <h1 id="appTitle">KA1 ADU — Mobility Planner 2026–2027</h1>
-  <p class="subtitle">Katholiciek Onderwijs Vlaanderen · KA121 Adult Education · Budget: €360.000</p>
+  <p class="subtitle">Katholiek Onderwijs Vlaanderen · KA121 Adult Education · Budget: €360.000</p>
 
   <div class="top-bar">
     <button class="primary" onclick="openAdd()">+ Mobiliteit toevoegen</button>
@@ -126,6 +116,7 @@ textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;pa
     <span class="legend-item"><span class="legend-dot color-expert"></span>Invited expert</span>
   </div>
 
+  <div class="section-title">Planning per maand</div>
   <div id="calWrap"></div>
 
   <div class="section-title">Alle mobilities</div>
@@ -150,16 +141,16 @@ textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;pa
     </div>
   </div>
   <div class="form-row">
-    <div><label>Startdatum</label><input type="date" id="f-start" min="2026-09-01" max="2027-06-30" onchange="calcPreview()"></div>
-    <div><label>Einddatum</label><input type="date" id="f-end" min="2026-09-01" max="2027-06-30" onchange="calcPreview()"></div>
+    <div><label>Startdatum (reisdag)</label><input type="date" id="f-start" min="2026-09-01" max="2027-06-30" onchange="updatePreview()"></div>
+    <div><label>Einddatum (reisdag)</label><input type="date" id="f-end" min="2026-09-01" max="2027-06-30" onchange="updatePreview()"></div>
   </div>
   <div class="form-row">
-    <div><label>Land</label><select id="f-country" onchange="calcPreview()"><option value="">-- kies --</option></select></div>
+    <div><label>Land</label><select id="f-country" onchange="updatePreview()"><option value="">-- kies --</option></select></div>
     <div><label>Stad</label><input id="f-city" placeholder="Bv. Barcelona"></div>
   </div>
   <div class="form-row">
     <div><label>Afstandsband (km van Brussel)</label>
-      <select id="f-dist" onchange="calcPreview()">
+      <select id="f-dist" onchange="updatePreview()">
         <option value="10">10 km</option><option value="100">100 km</option>
         <option value="500" selected>500 km</option><option value="2000">2000 km</option>
         <option value="3000">3000 km</option><option value="4000">4000 km</option>
@@ -167,14 +158,14 @@ textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;pa
       </select>
     </div>
     <div><label>Reistype</label>
-      <select id="f-travel" onchange="calcPreview()">
+      <select id="f-travel" onchange="updatePreview()">
         <option value="standard">Standaard</option>
         <option value="green">Groen reizen</option>
       </select>
     </div>
   </div>
   <div class="form-row">
-    <div><label>Aantal deelnemers</label><input type="number" id="f-participants" value="1" min="1" onchange="calcPreview()"></div>
+    <div><label>Aantal deelnemers</label><input type="number" id="f-participants" value="1" min="1" onchange="updatePreview()"></div>
     <div><label>Management fee</label><input id="f-mgmt" readonly></div>
   </div>
   <div class="form-row full">
@@ -215,7 +206,7 @@ textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;pa
     <div class="btn-row"><button class="primary" onclick="printSec('exp-ty')">🖨 Afdrukken / PDF</button></div>
   </div>
   <div id="tab-csv" class="exp-section">
-    <p style="font-size:12px;color:#5f5e5a;margin-bottom:.75rem">Scheidingsteken: puntkomma. Plak in Excel of Google Sheets, of download als .csv.</p>
+    <p style="font-size:12px;color:#5f5e5a;margin-bottom:.75rem">Scheidingsteken: puntkomma. Plak in Excel of Google Sheets.</p>
     <textarea class="csv-out" id="csvContent" readonly></textarea>
     <div class="btn-row">
       <button onclick="copyCsv()">Kopiëren</button>
@@ -230,10 +221,10 @@ textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;pa
 <div class="modal">
   <button class="close-x" onclick="closeSettings()">×</button>
   <h2>Instellingen</h2>
-  <div class="field" style="margin-bottom:1rem"><label>JSONBin Bin ID</label><input id="st-binid"></div>
-  <div class="field" style="margin-bottom:1rem"><label>JSONBin API Key</label><input id="st-apikey" type="password"></div>
-  <div class="field" style="margin-bottom:1rem"><label>Nieuw beheerderswachtwoord (leeg laten = ongewijzigd)</label><input id="st-adminpw" type="password" placeholder="Leeg = ongewijzigd"></div>
-  <div class="field" style="margin-bottom:1rem"><label>Projectnaam</label><input id="st-name"></div>
+  <div style="margin-bottom:1rem"><label>JSONBin Bin ID</label><input id="st-binid"></div>
+  <div style="margin-bottom:1rem"><label>JSONBin API Key</label><input id="st-apikey" type="password"></div>
+  <div style="margin-bottom:1rem"><label>Nieuw beheerderswachtwoord (leeg = ongewijzigd)</label><input id="st-adminpw" type="password"></div>
+  <div style="margin-bottom:1rem"><label>Projectnaam</label><input id="st-name"></div>
   <div class="btn-row">
     <button onclick="closeSettings()">Annuleren</button>
     <button class="primary" onclick="settingsSave()">Opslaan</button>
@@ -244,7 +235,7 @@ textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;pa
 <div class="toast" id="toast"></div>
 
 <script>
-// ── Constants ──────────────────────────────────────────────
+// ── Constanten ─────────────────────────────────────────────
 const TOTAL = 360000;
 const CLUSTERS = [
   "Brede cursistenbegeleiding en inclusieve didactiek",
@@ -262,15 +253,15 @@ const COUNTRY_GROUP = {
   "Portugal":2,"Roemenië":3,"Servië":3,"Slovenië":2,"Slowakije":2,"Spanje":2,
   "Tsjechië":2,"Turkije":3,"Zweden":1
 };
-const IND = {1:172,2:152,3:133};
+const IND = {1:172, 2:152, 3:133};
 const TRAVEL = {
-  10:{standard:28,green:56},100:{standard:211,green:285},500:{standard:309,green:417},
-  2000:{standard:395,green:535},3000:{standard:580,green:785},
-  4000:{standard:1188,green:1188},8000:{standard:1735,green:1735}
+  10:{standard:28,green:56}, 100:{standard:211,green:285}, 500:{standard:309,green:417},
+  2000:{standard:395,green:535}, 3000:{standard:580,green:785},
+  4000:{standard:1188,green:1188}, 8000:{standard:1735,green:1735}
 };
-const MGMT = {course:100,jobshadow:350,teaching:350,expert:100};
-const TYPE_LABEL = {course:"Cursus",jobshadow:"Jobshadowing",teaching:"Teaching assignment",expert:"Invited expert"};
-const TYPE_COLOR = {course:"color-course",jobshadow:"color-jobshadow",teaching:"color-teaching",expert:"color-expert"};
+const MGMT = {course:100, jobshadow:350, teaching:350, expert:100};
+const TYPE_LABEL = {course:"Cursus", jobshadow:"Jobshadowing", teaching:"Teaching assignment", expert:"Invited expert"};
+const TYPE_COLOR = {course:"color-course", jobshadow:"color-jobshadow", teaching:"color-teaching", expert:"color-expert"};
 const MONTHS = [
   {y:2026,m:9},{y:2026,m:10},{y:2026,m:11},{y:2026,m:12},
   {y:2027,m:1},{y:2027,m:2},{y:2027,m:3},{y:2027,m:4},{y:2027,m:5},{y:2027,m:6}
@@ -283,12 +274,9 @@ let editId = null;
 let cfg = {};
 
 // ── Config ─────────────────────────────────────────────────
-function loadCfg() {
-  try { cfg = JSON.parse(localStorage.getItem('ka1_cfg') || '{}'); } catch(e) { cfg = {}; }
-}
+function loadCfg() { try { cfg = JSON.parse(localStorage.getItem('ka1_cfg') || '{}'); } catch(e) { cfg = {}; } }
 function saveCfg() { localStorage.setItem('ka1_cfg', JSON.stringify(cfg)); }
 
-// ── Init ───────────────────────────────────────────────────
 loadCfg();
 if (!cfg.binId || !cfg.apiKey) {
   document.getElementById('setupScreen').style.display = 'block';
@@ -317,27 +305,20 @@ function startApp() {
   loadData();
 }
 
-// ── JSONBin API ────────────────────────────────────────────
+// ── JSONBin ────────────────────────────────────────────────
 const API = 'https://api.jsonbin.io/v3/b/';
 
 async function loadData() {
   const btn = document.getElementById('refreshBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Laden…';
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Laden…';
   try {
-    const r = await fetch(API + cfg.binId + '/latest', {
-      headers: { 'X-Master-Key': cfg.apiKey }
-    });
+    const r = await fetch(API + cfg.binId + '/latest', { headers: { 'X-Master-Key': cfg.apiKey } });
     if (!r.ok) throw new Error(r.status);
     const data = await r.json();
     mobilities = data.record.mobilities || [];
-    render();
-    toast('Data geladen');
-  } catch(e) {
-    toast('Fout bij laden: ' + e.message, true);
-  }
-  btn.disabled = false;
-  btn.textContent = '↻ Vernieuwen';
+    render(); toast('Data geladen');
+  } catch(e) { toast('Fout bij laden: ' + e.message, true); }
+  btn.disabled = false; btn.textContent = '↻ Vernieuwen';
 }
 
 async function pushData() {
@@ -349,47 +330,60 @@ async function pushData() {
   if (!r.ok) throw new Error(r.status);
 }
 
-// ── Budget ─────────────────────────────────────────────────
-function days(s, e) { return Math.max(1, Math.round((new Date(e) - new Date(s)) / 86400000) + 1); }
-function calcBudget(m) {
-  const d = days(m.start, m.end), grp = COUNTRY_GROUP[m.country] || 2, p = m.participants;
-  const indSupp = IND[grp] * d * p;
-  const mgmt = MGMT[m.type] * p;
-  const courseDays = Math.max(0, d - 2);
-  const courseFee = (m.type === 'course' || m.type === 'expert') ? 80 * courseDays * p : 0;
-  const trav = (TRAVEL[m.dist] || TRAVEL[500])[m.travel] * p;
-  return { indSupp, mgmt, courseFee, trav, total: indSupp + mgmt + courseFee + trav, days: d, courseDays };
+// ── Budgetberekening ───────────────────────────────────────
+function countDays(start, end) {
+  return Math.max(1, Math.round((new Date(end) - new Date(start)) / 86400000) + 1);
 }
 
-// Alias zodat buildCsv en andere functies dezelfde naam gebruiken
-function calcMobBudget(m) { return calcBudget(m); }
-function fmt(n) { return Math.round(n).toLocaleString('nl-BE'); }
+function calcBudget(mob) {
+  const d = countDays(mob.start, mob.end);
+  const grp = COUNTRY_GROUP[mob.country] || 2;
+  const p = mob.participants;
+  const indSupp = IND[grp] * d * p;
+  const mgmt = MGMT[mob.type] * p;
+  const courseDays = Math.max(0, d - 2);   // eerste en laatste dag zijn reisdagen
+  const courseFee = (mob.type === 'course' || mob.type === 'expert') ? 80 * courseDays * p : 0;
+  const trav = (TRAVEL[mob.dist] || TRAVEL[500])[mob.travel] * p;
+  const total = indSupp + mgmt + courseFee + trav;
+  return { indSupp, mgmt, courseFee, trav, total, days: d, courseDays };
+}
 
-// ── Preview ────────────────────────────────────────────────
-function calcPreview() {
-  const s = document.getElementById('f-start').value, e = document.getElementById('f-end').value;
-  const c = document.getElementById('f-country').value;
-  if (!s || !e || !c) { document.getElementById('budgetPreview').innerHTML = '<strong>Geschat budget</strong>: vul formulier in'; return; }
-  const m = {
-    start: s, end: e, country: c, type: document.getElementById('f-type').value,
-    dist: parseInt(document.getElementById('f-dist').value),
-    travel: document.getElementById('f-travel').value,
+// ── Preview in formulier ───────────────────────────────────
+function updatePreview() {
+  const start   = document.getElementById('f-start').value;
+  const end     = document.getElementById('f-end').value;
+  const country = document.getElementById('f-country').value;
+  const el      = document.getElementById('budgetPreview');
+  if (!start || !end || !country) {
+    el.innerHTML = '<strong>Geschat budget</strong>: vul formulier in';
+    return;
+  }
+  const mob = {
+    start, end, country,
+    type:         document.getElementById('f-type').value,
+    dist:         parseInt(document.getElementById('f-dist').value),
+    travel:       document.getElementById('f-travel').value,
     participants: parseInt(document.getElementById('f-participants').value) || 1
   };
-      const b = calcBudget(m);
-  document.getElementById('budgetPreview').innerHTML =
+  const b = calcBudget(mob);
+  const grp = COUNTRY_GROUP[country] || 2;
+  el.innerHTML =
     `<strong>Geschat budget: €${fmt(b.total)}</strong><br>
-    <span style="color:#5f5e5a">Ind. steun: €${fmt(b.indSupp)} (${b.days} dag${b.days > 1 ? 'en' : ''} × €${IND[COUNTRY_GROUP[c] || 2]} × ${m.participants} deeln.)
-    &nbsp;|&nbsp; Mgmt fee: €${fmt(b.mgmt)}
-    &nbsp;|&nbsp; Reissteun: €${fmt(b.trav)}
-    ${b.courseFee ? `&nbsp;|&nbsp; Cursusbijdr.: €${fmt(b.courseFee)} (${b.courseDays} cursusdagen excl. reisdagen)` : ''}</span>`;
-}
-function updateMgmt() {
-  document.getElementById('f-mgmt').value = '€' + MGMT[document.getElementById('f-type').value] + ' per deelnemer';
-  calcPreview();
+     <span style="color:#5f5e5a">
+       Ind. steun: €${fmt(b.indSupp)} (${b.days} dag${b.days > 1 ? 'en' : ''} × €${IND[grp]} × ${mob.participants} deeln.)
+       &nbsp;|&nbsp; Mgmt fee: €${fmt(b.mgmt)}
+       &nbsp;|&nbsp; Reissteun: €${fmt(b.trav)}
+       ${b.courseFee ? `&nbsp;|&nbsp; Cursusbijdr.: €${fmt(b.courseFee)} (${b.courseDays} cursusdag${b.courseDays !== 1 ? 'en' : ''}, excl. 2 reisdagen)` : ''}
+     </span>`;
 }
 
-// ── Modal ──────────────────────────────────────────────────
+function updateMgmt() {
+  const type = document.getElementById('f-type').value;
+  document.getElementById('f-mgmt').value = '€' + MGMT[type] + ' per deelnemer';
+  updatePreview();
+}
+
+// ── Modaal: toevoegen / bewerken ───────────────────────────
 function openAdd() {
   editId = null;
   document.getElementById('modalTitle').textContent = 'Mobiliteit toevoegen';
@@ -409,48 +403,49 @@ function openAdd() {
 }
 
 function openEdit(id) {
-  const m = mobilities.find(x => x.id === id); if (!m) return;
+  const mob = mobilities.find(x => x.id === id); if (!mob) return;
   editId = id;
-  document.getElementById('modalTitle').innerHTML = 'Mobiliteit bewerken';
+  document.getElementById('modalTitle').textContent = 'Mobiliteit bewerken';
   document.getElementById('deleteBtn').style.display = 'inline-block';
-  document.getElementById('f-title').value = m.title;
-  document.getElementById('f-type').value = m.type;
-  document.getElementById('f-start').value = m.start;
-  document.getElementById('f-end').value = m.end;
-  document.getElementById('f-country').value = m.country;
-  document.getElementById('f-city').value = m.city || '';
-  document.getElementById('f-dist').value = m.dist;
-  document.getElementById('f-travel').value = m.travel;
-  document.getElementById('f-participants').value = m.participants;
-  document.getElementById('f-notes').value = m.notes || '';
-  document.querySelectorAll('#clusterChecks input').forEach(c => c.checked = m.clusters.includes(c.value));
-  updateMgmt(); calcPreview();
+  document.getElementById('f-title').value = mob.title;
+  document.getElementById('f-type').value = mob.type;
+  document.getElementById('f-start').value = mob.start;
+  document.getElementById('f-end').value = mob.end;
+  document.getElementById('f-country').value = mob.country;
+  document.getElementById('f-city').value = mob.city || '';
+  document.getElementById('f-dist').value = mob.dist;
+  document.getElementById('f-travel').value = mob.travel;
+  document.getElementById('f-participants').value = mob.participants;
+  document.getElementById('f-notes').value = mob.notes || '';
+  document.querySelectorAll('#clusterChecks input').forEach(c => c.checked = mob.clusters.includes(c.value));
+  updateMgmt();
   document.getElementById('modalBg').style.display = 'flex';
 }
 
 function closeModal() { document.getElementById('modalBg').style.display = 'none'; }
 
 async function saveEntry() {
-  const title = document.getElementById('f-title').value.trim();
-  const start = document.getElementById('f-start').value;
-  const end = document.getElementById('f-end').value;
+  const title   = document.getElementById('f-title').value.trim();
+  const start   = document.getElementById('f-start').value;
+  const end     = document.getElementById('f-end').value;
   const country = document.getElementById('f-country').value;
   if (!title || !start || !end || !country) { alert('Vul minstens titel, data en land in.'); return; }
   const clusters = [...document.querySelectorAll('#clusterChecks input:checked')].map(c => c.value);
-  const m = {
+  const mob = {
     id: editId || Date.now().toString(),
     title, type: document.getElementById('f-type').value,
-    start, end, country, city: document.getElementById('f-city').value,
-    dist: parseInt(document.getElementById('f-dist').value),
-    travel: document.getElementById('f-travel').value,
+    start, end, country,
+    city:         document.getElementById('f-city').value,
+    dist:         parseInt(document.getElementById('f-dist').value),
+    travel:       document.getElementById('f-travel').value,
     participants: parseInt(document.getElementById('f-participants').value) || 1,
-    notes: document.getElementById('f-notes').value,
+    notes:        document.getElementById('f-notes').value,
     clusters
   };
   const btn = document.getElementById('saveBtn');
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Opslaan…';
   try {
-    mobilities = editId ? mobilities.map(x => x.id === editId ? m : x) : [...mobilities, m];
+    mobilities = editId ? mobilities.map(x => x.id === editId ? mob : x) : [...mobilities, mob];
     await pushData();
     closeModal(); render(); toast('Opgeslagen');
   } catch(e) { toast('Opslaan mislukt: ' + e.message, true); }
@@ -458,18 +453,19 @@ async function saveEntry() {
 }
 
 async function deleteEntry() {
-  const pw = prompt('Voer het beheerderswachtwoord in om te verwijderen:');
+  const pw = prompt('Voer het beheerderswachtwoord in:');
   if (!pw) return;
   if (simpleHash(pw) !== cfg.adminPwHash) { alert('Onjuist wachtwoord.'); return; }
   if (!confirm('Verwijder deze mobiliteit?')) return;
   try {
     mobilities = mobilities.filter(x => x.id !== editId);
-    await pushData();
-    closeModal(); render(); toast('Verwijderd');
+    await pushData(); closeModal(); render(); toast('Verwijderd');
   } catch(e) { toast('Verwijderen mislukt: ' + e.message, true); }
 }
 
 // ── Render ─────────────────────────────────────────────────
+function fmt(n) { return Math.round(n).toLocaleString('nl-BE'); }
+
 function render() {
   const used = mobilities.reduce((s, m) => s + calcBudget(m).total, 0);
   const pct = Math.min(100, (used / TOTAL) * 100);
@@ -484,95 +480,70 @@ function render() {
   renderCal(); renderList();
 }
 
-function getMonthMobs(y, m) {
-  return mobilities.filter(mob => {
-    const s = new Date(mob.start), e = new Date(mob.end);
-    const ms = new Date(y, m - 1, 1), me = new Date(y, m, 0);
-    return s <= me && e >= ms;
-  });
-}
-
-// Returns Monday-starting weeks that overlap with the given month
-function getWeeksForMonth(y, m) {
-  const firstDay = new Date(y, m - 1, 1);
-  const lastDay = new Date(y, m, 0);
-  // Find the Monday on or before the first day of the month
-  const dow = firstDay.getDay(); // 0=Sun
-  const diff = (dow === 0) ? -6 : 1 - dow;
-  let weekStart = new Date(firstDay);
-  weekStart.setDate(firstDay.getDate() + diff);
+// ── Kalender met weken ─────────────────────────────────────
+function weeksForMonth(y, m) {
+  const first = new Date(y, m - 1, 1), last = new Date(y, m, 0);
+  const dow = first.getDay(), diff = dow === 0 ? -6 : 1 - dow;
+  let ws = new Date(first); ws.setDate(first.getDate() + diff);
   const weeks = [];
-  while (weekStart <= lastDay) {
-    const weekEnd = new Date(weekStart);
-    weekEnd.setDate(weekStart.getDate() + 6);
-    weeks.push({ start: new Date(weekStart), end: new Date(weekEnd) });
-    weekStart.setDate(weekStart.getDate() + 7);
+  while (ws <= last) {
+    const we = new Date(ws); we.setDate(ws.getDate() + 6);
+    weeks.push({ start: new Date(ws), end: new Date(we) });
+    ws.setDate(ws.getDate() + 7);
   }
   return weeks;
 }
 
-function fmtWeekLabel(wStart, wEnd, monthY, monthM) {
-  const mStart = new Date(monthY, monthM - 1, 1);
-  const mEnd = new Date(monthY, monthM, 0);
-  const ds = wStart < mStart ? mStart : wStart;
-  const de = wEnd > mEnd ? mEnd : wEnd;
-  const dFmt = d => d.getDate();
-  return `${dFmt(ds)}–${dFmt(de)} ${MNL[monthM]}`;
+function weekLabel(wS, wE, y, m) {
+  const mS = new Date(y, m - 1, 1), mE = new Date(y, m, 0);
+  const ds = wS < mS ? mS : wS, de = wE > mE ? mE : wE;
+  return `${ds.getDate()}–${de.getDate()} ${MNL[m]}`;
 }
 
-function getMobsForWeek(wStart, wEnd) {
-  return mobilities.filter(mob => {
-    const s = new Date(mob.start), e = new Date(mob.end);
-    return s <= wEnd && e >= wStart;
-  });
+function mobsInRange(s, e) {
+  return mobilities.filter(mob => new Date(mob.start) <= e && new Date(mob.end) >= s);
+}
+
+function prorata(mob, s, e) {
+  const b = calcBudget(mob);
+  const s2 = new Date(mob.start) > s ? new Date(mob.start) : s;
+  const e2 = new Date(mob.end) < e ? new Date(mob.end) : e;
+  const ov = Math.max(0, Math.round((e2 - s2) / 86400000) + 1);
+  return (ov / b.days) * b.total;
 }
 
 function renderCal() {
-  let html = '<div class="section-title">Planning per maand</div>';
+  let html = '';
   MONTHS.forEach(({y, m}) => {
-    const weeks = getWeeksForMonth(y, m);
-    const monthMobs = getMonthMobs(y, m);
-    const monthBud = monthMobs.reduce((s, mob) => {
-      const b = calcBudget(mob), d = b.days;
-      const ms = new Date(y, m - 1, 1), me = new Date(y, m, 0);
-      const s2 = new Date(mob.start) > ms ? new Date(mob.start) : ms;
-      const e2 = new Date(mob.end) < me ? new Date(mob.end) : me;
-      const ov = Math.max(0, Math.round((e2 - s2) / 86400000) + 1);
-      return s + (ov / d) * b.total;
-    }, 0);
+    const weeks = weeksForMonth(y, m);
+    const mS = new Date(y, m - 1, 1), mE = new Date(y, m, 0);
+    const monthBud = mobsInRange(mS, mE).reduce((s, mob) => s + prorata(mob, mS, mE), 0);
 
-    html += `<table class="cal" style="margin-bottom:10px">
+    html += `<table class="cal">
       <thead><tr>
-        <th style="width:56px;text-align:center">${MNL[m]}<br><span style="font-size:10px;font-weight:400">${y}</span></th>
-        <th style="width:90px">Week</th>
+        <th style="width:64px">${MNL[m]} ${y}</th>
+        <th style="width:88px">Week</th>
         <th>Mobilities</th>
-        <th style="width:90px;text-align:right">Budget</th>
+        <th style="width:80px;text-align:right">Budget</th>
       </tr></thead><tbody>`;
 
     weeks.forEach(({start: wS, end: wE}) => {
-      const wMobs = getMobsForWeek(wS, wE);
-      const wBud = wMobs.reduce((s, mob) => {
-        const b = calcBudget(mob), d = b.days;
-        const s2 = new Date(mob.start) > wS ? new Date(mob.start) : wS;
-        const e2 = new Date(mob.end) < wE ? new Date(mob.end) : wE;
-        const ov = Math.max(0, Math.round((e2 - s2) / 86400000) + 1);
-        return s + (ov / d) * b.total;
-      }, 0);
+      const wMobs = mobsInRange(wS, wE);
+      const wBud = wMobs.reduce((s, mob) => s + prorata(mob, wS, wE), 0);
       const chips = wMobs.map(mob =>
         `<span class="mob-chip ${TYPE_COLOR[mob.type]}" onclick="openEdit('${mob.id}')" title="${mob.title}">${mob.title}</span>`
       ).join('');
-      const label = fmtWeekLabel(wS, wE, y, m);
       html += `<tr>
-        <td style="border:0.5px solid #d3d1c7"></td>
-        <td style="font-size:11px;color:#5f5e5a;white-space:nowrap;vertical-align:middle;padding:4px 6px;border:0.5px solid #d3d1c7">${label}</td>
-        <td style="border:0.5px solid #d3d1c7;padding:3px 4px;vertical-align:top;min-height:36px">${chips || '<span style="color:#c0bfb8;font-size:10px">—</span>'}</td>
-        <td style="text-align:right;font-size:11px;color:#5f5e5a;vertical-align:middle;border:0.5px solid #d3d1c7;padding:4px 6px">${wBud > 0 ? '€' + fmt(wBud) : ''}</td>
+        <td style="background:#f0efe8"></td>
+        <td style="font-size:11px;color:#5f5e5a;white-space:nowrap">${weekLabel(wS, wE, y, m)}</td>
+        <td style="padding:3px 4px;vertical-align:top">${chips || '<span style="color:#ccc;font-size:10px">—</span>'}</td>
+        <td style="text-align:right;font-size:11px;color:#5f5e5a">${wBud > 0 ? '€' + fmt(wBud) : ''}</td>
       </tr>`;
     });
 
     html += `</tbody><tfoot><tr>
-      <td colspan="3" style="font-size:11px;color:#5f5e5a;padding:4px 6px;border-top:0.5px solid #b4b2a9;font-weight:500">Maandtotaal</td>
-      <td style="text-align:right;font-size:11px;font-weight:500;padding:4px 6px;border-top:0.5px solid #b4b2a9">€${fmt(monthBud)}</td>
+      <td colspan="3">Maandtotaal</td>
+      <td style="text-align:right">€${fmt(monthBud)}</td>
     </tr></tfoot></table>`;
   });
   document.getElementById('calWrap').innerHTML = html;
@@ -584,16 +555,19 @@ function renderList() {
     return;
   }
   const sorted = [...mobilities].sort((a, b) => a.start.localeCompare(b.start));
-  document.getElementById('mobList').innerHTML = sorted.map(m => {
-    const b = calcBudget(m);
-    const cls = m.clusters.map(c => { const i = CLUSTERS.indexOf(c); return i >= 0 ? `<span class="cluster-tag">${i+1}. ${c}</span>` : null; }).filter(Boolean).join('');
-    return `<div class="card" onclick="openEdit('${m.id}')">
+  document.getElementById('mobList').innerHTML = sorted.map(mob => {
+    const b = calcBudget(mob);
+    const cls = mob.clusters.map(c => {
+      const i = CLUSTERS.indexOf(c);
+      return i >= 0 ? `<span class="cluster-tag">${i + 1}. ${c}</span>` : null;
+    }).filter(Boolean).join('');
+    return `<div class="card" onclick="openEdit('${mob.id}')">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-        <span class="mob-chip ${TYPE_COLOR[m.type]}" style="display:inline-block">${TYPE_LABEL[m.type]}</span>
-        <strong style="font-size:14px">${m.title}</strong>
+        <span class="mob-chip ${TYPE_COLOR[mob.type]}" style="display:inline-block">${TYPE_LABEL[mob.type]}</span>
+        <strong style="font-size:14px">${mob.title}</strong>
         <span style="margin-left:auto;font-size:14px;font-weight:500">€${fmt(b.total)}</span>
       </div>
-      <div style="font-size:12px;color:#5f5e5a">${m.start} → ${m.end} &nbsp;|&nbsp; ${m.country}${m.city ? ' (' + m.city + ')' : ''} &nbsp;|&nbsp; ${m.participants} deeln. &nbsp;|&nbsp; ${b.days} dag${b.days > 1 ? 'en' : ''}</div>
+      <div style="font-size:12px;color:#5f5e5a">${mob.start} → ${mob.end} | ${mob.country}${mob.city ? ' (' + mob.city + ')' : ''} | ${mob.participants} deeln. | ${b.days} dagen${b.courseDays < b.days ? ' (' + b.courseDays + ' cursusdagen)' : ''}</div>
       <div class="cluster-tags">${cls}</div>
     </div>`;
   }).join('');
@@ -611,7 +585,7 @@ function buildOv() {
   const sorted = [...mobilities].sort((a, b) => a.start.localeCompare(b.start));
   const used = mobilities.reduce((s, m) => s + calcBudget(m).total, 0);
   const rows = sorted.map(m => { const b = calcBudget(m); return `<tr><td>${m.start}</td><td>${m.end}</td><td>${m.title}</td><td>${TYPE_LABEL[m.type]}</td><td>${m.country}${m.city?' – '+m.city:''}</td><td>${m.participants}</td><td style="text-align:right">€${fmt(b.indSupp)}</td><td style="text-align:right">€${fmt(b.mgmt)}</td><td style="text-align:right">€${fmt(b.trav)}</td><td style="text-align:right">€${fmt(b.courseFee)}</td><td style="text-align:right;font-weight:500">€${fmt(b.total)}</td></tr>`; }).join('');
-  document.getElementById('exp-ov').innerHTML = `<div style="margin-bottom:.75rem;font-size:12px;color:#5f5e5a">Budget: €${fmt(TOTAL)} | Gebruikt: €${fmt(used)} | Resterend: €${fmt(TOTAL-used)}</div><div style="overflow-x:auto"><table class="exp-table"><thead><tr><th>Start</th><th>Einde</th><th>Titel</th><th>Type</th><th>Land/stad</th><th>Deeln.</th><th>Ind. steun</th><th>Mgmt fee</th><th>Reissteun</th><th>Cursusbijdr.</th><th>Totaal</th></tr></thead><tbody>${rows||'<tr><td colspan="11" style="color:#5f5e5a">Geen mobilities</td></tr>'}</tbody><tfoot><tr><td colspan="6">Totaal</td><td></td><td></td><td></td><td></td><td style="text-align:right">€${fmt(used)}</td></tr></tfoot></table></div>`;
+  document.getElementById('exp-ov').innerHTML = `<div style="margin-bottom:.75rem;font-size:12px;color:#5f5e5a">Budget: €${fmt(TOTAL)} | Gebruikt: €${fmt(used)} | Resterend: €${fmt(TOTAL - used)}</div><div style="overflow-x:auto"><table class="exp-table"><thead><tr><th>Start</th><th>Einde</th><th>Titel</th><th>Type</th><th>Land/stad</th><th>Deeln.</th><th>Ind. steun</th><th>Mgmt fee</th><th>Reissteun</th><th>Cursusbijdr.</th><th>Totaal</th></tr></thead><tbody>${rows || '<tr><td colspan="11">Geen mobilities</td></tr>'}</tbody><tfoot><tr><td colspan="6">Totaal</td><td></td><td></td><td></td><td></td><td style="text-align:right">€${fmt(used)}</td></tr></tfoot></table></div>`;
 }
 function buildCl() {
   let html = '';
@@ -619,7 +593,7 @@ function buildCl() {
     const mobs = mobilities.filter(m => m.clusters.includes(cl));
     const total = mobs.reduce((s, m) => s + calcBudget(m).total, 0);
     const rows = mobs.map(m => { const b = calcBudget(m); return `<tr><td>${m.start} → ${m.end}</td><td>${m.title}</td><td>${TYPE_LABEL[m.type]}</td><td>${m.country}</td><td>${m.participants}</td><td style="text-align:right">€${fmt(b.total)}</td></tr>`; }).join('');
-    html += `<div style="margin-bottom:1.25rem"><div style="font-size:13px;font-weight:500;margin-bottom:.5rem">${ci+1}. ${cl} <span style="font-weight:400;color:#5f5e5a">— €${fmt(total)} | ${mobs.length} mobiliteit${mobs.length!==1?'s':''}</span></div><table class="exp-table"><thead><tr><th>Datum</th><th>Titel</th><th>Type</th><th>Land</th><th>Deeln.</th><th>Budget</th></tr></thead><tbody>${rows||'<tr><td colspan="6" style="color:#5f5e5a">—</td></tr>'}</tbody></table></div>`;
+    html += `<div style="margin-bottom:1.25rem"><div style="font-size:13px;font-weight:500;margin-bottom:.5rem">${ci+1}. ${cl} <span style="font-weight:400;color:#5f5e5a">— €${fmt(total)} | ${mobs.length} mobiliteit${mobs.length !== 1 ? 'en' : ''}</span></div><table class="exp-table"><thead><tr><th>Datum</th><th>Titel</th><th>Type</th><th>Land</th><th>Deeln.</th><th>Budget</th></tr></thead><tbody>${rows || '<tr><td colspan="6">—</td></tr>'}</tbody></table></div>`;
   });
   document.getElementById('exp-cl').innerHTML = html;
 }
@@ -629,21 +603,21 @@ function buildTy() {
     const mobs = mobilities.filter(m => m.type === type);
     const total = mobs.reduce((s, m) => s + calcBudget(m).total, 0);
     const rows = mobs.map(m => { const b = calcBudget(m); return `<tr><td>${m.start} → ${m.end}</td><td>${m.title}</td><td>${m.country}</td><td>${m.participants}</td><td style="text-align:right">€${fmt(b.total)}</td></tr>`; }).join('');
-    html += `<div style="margin-bottom:1.25rem"><div style="font-size:13px;font-weight:500;margin-bottom:.5rem">${TYPE_LABEL[type]} <span style="font-weight:400;color:#5f5e5a">— €${fmt(total)} | ${mobs.length} mobiliteit${mobs.length!==1?'s':''}</span></div><table class="exp-table"><thead><tr><th>Datum</th><th>Titel</th><th>Land</th><th>Deeln.</th><th>Budget</th></tr></thead><tbody>${rows||'<tr><td colspan="5" style="color:#5f5e5a">—</td></tr>'}</tbody></table></div>`;
+    html += `<div style="margin-bottom:1.25rem"><div style="font-size:13px;font-weight:500;margin-bottom:.5rem">${TYPE_LABEL[type]} <span style="font-weight:400;color:#5f5e5a">— €${fmt(total)} | ${mobs.length} mobiliteit${mobs.length !== 1 ? 'en' : ''}</span></div><table class="exp-table"><thead><tr><th>Datum</th><th>Titel</th><th>Land</th><th>Deeln.</th><th>Budget</th></tr></thead><tbody>${rows || '<tr><td colspan="5">—</td></tr>'}</tbody></table></div>`;
   });
   document.getElementById('exp-ty').innerHTML = html;
 }
 function buildCsv() {
   const sorted = [...mobilities].sort((a, b) => a.start.localeCompare(b.start));
-  const hdr = 'Titel;Type;Startdatum;Einddatum;Dagen;Land;Stad;Deelnemers;Afstandsband;Reistype;Ind. steun;Mgmt fee;Reissteun;Cursusbijdrage;Totaal;Clusters;Notities';
+  const hdr = 'Titel;Type;Startdatum;Einddatum;Totaal dagen;Cursusdagen;Land;Stad;Deelnemers;Afstandsband;Reistype;Ind. steun;Mgmt fee;Reissteun;Cursusbijdrage;Totaal;Clusters;Notities';
   const rows = sorted.map(m => {
     const b = calcBudget(m);
     const cls = m.clusters.map(c => { const i = CLUSTERS.indexOf(c); return i >= 0 ? (i+1)+'. '+c : c; }).join(' | ');
-    return [m.title, TYPE_LABEL[m.type], m.start, m.end, b.days, m.country, m.city||'', m.participants, m.dist, m.travel === 'green' ? 'Groen' : 'Standaard', b.indSupp, b.mgmt, b.trav, b.courseFee, Math.round(b.total), cls, m.notes||''].map(v => `"${String(v).replace(/"/g,'""')}"`).join(';');
+    return [m.title, TYPE_LABEL[m.type], m.start, m.end, b.days, b.courseDays, m.country, m.city||'', m.participants, m.dist, m.travel==='green'?'Groen':'Standaard', b.indSupp, b.mgmt, b.trav, b.courseFee, Math.round(b.total), cls, m.notes||''].map(v => `"${String(v).replace(/"/g,'""')}"`).join(';');
   });
   document.getElementById('csvContent').value = [hdr, ...rows].join('\n');
 }
-function copyCsv() { const el = document.getElementById('csvContent'); el.select(); try { document.execCommand('copy'); toast('Gekopieerd'); } catch(e) { alert('Selecteer de tekst handmatig.'); } }
+function copyCsv() { const el = document.getElementById('csvContent'); el.select(); try { document.execCommand('copy'); toast('Gekopieerd'); } catch(e) { alert('Selecteer handmatig.'); } }
 function downloadCsv() {
   const blob = new Blob(['\uFEFF' + document.getElementById('csvContent').value], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob), a = document.createElement('a');
@@ -655,7 +629,7 @@ function printSec(id) {
   w.document.close(); w.focus(); setTimeout(() => w.print(), 400);
 }
 
-// ── Settings ───────────────────────────────────────────────
+// ── Instellingen ───────────────────────────────────────────
 function openSettings() {
   document.getElementById('st-binid').value = cfg.binId || '';
   document.getElementById('st-apikey').value = cfg.apiKey || '';
@@ -675,7 +649,7 @@ function settingsSave() {
   closeSettings(); toast('Instellingen opgeslagen');
 }
 
-// ── Helpers ────────────────────────────────────────────────
+// ── Hulpfuncties ───────────────────────────────────────────
 function simpleHash(str) {
   let h = 0;
   for (let i = 0; i < str.length; i++) { h = (Math.imul(31, h) + str.charCodeAt(i)) | 0; }
