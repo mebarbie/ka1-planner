@@ -360,6 +360,9 @@ function calcBudget(m) {
   const trav = (TRAVEL[m.dist] || TRAVEL[500])[m.travel] * p;
   return { indSupp, mgmt, courseFee, trav, total: indSupp + mgmt + courseFee + trav, days: d, courseDays };
 }
+
+// Alias zodat buildCsv en andere functies dezelfde naam gebruiken
+function calcMobBudget(m) { return calcBudget(m); }
 function fmt(n) { return Math.round(n).toLocaleString('nl-BE'); }
 
 // ── Preview ────────────────────────────────────────────────
