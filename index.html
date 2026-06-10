@@ -355,9 +355,10 @@ function calcBudget(m) {
   const d = days(m.start, m.end), grp = COUNTRY_GROUP[m.country] || 2, p = m.participants;
   const indSupp = IND[grp] * d * p;
   const mgmt = MGMT[m.type] * p;
-  const courseFee = (m.type === 'course' || m.type === 'expert') ? 80 * d * p : 0;
+  const courseDays = Math.max(0, d - 2);
+  const courseFee = (m.type === 'course' || m.type === 'expert') ? 80 * courseDays * p : 0;
   const trav = (TRAVEL[m.dist] || TRAVEL[500])[m.travel] * p;
-  return { indSupp, mgmt, courseFee, trav, total: indSupp + mgmt + courseFee + trav, days: d };
+  return { indSupp, mgmt, courseFee, trav, total: indSupp + mgmt + courseFee + trav, days: d, courseDays };
 }
 function fmt(n) { return Math.round(n).toLocaleString('nl-BE'); }
 
@@ -372,13 +373,13 @@ function calcPreview() {
     travel: document.getElementById('f-travel').value,
     participants: parseInt(document.getElementById('f-participants').value) || 1
   };
-  const b = calcBudget(m);
+      const b = calcBudget(m);
   document.getElementById('budgetPreview').innerHTML =
     `<strong>Geschat budget: €${fmt(b.total)}</strong><br>
     <span style="color:#5f5e5a">Ind. steun: €${fmt(b.indSupp)} (${b.days} dag${b.days > 1 ? 'en' : ''} × €${IND[COUNTRY_GROUP[c] || 2]} × ${m.participants} deeln.)
     &nbsp;|&nbsp; Mgmt fee: €${fmt(b.mgmt)}
     &nbsp;|&nbsp; Reissteun: €${fmt(b.trav)}
-    ${b.courseFee ? '&nbsp;|&nbsp; Cursusbijdr.: €' + fmt(b.courseFee) : ''}</span>`;
+    ${b.courseFee ? `&nbsp;|&nbsp; Cursusbijdr.: €${fmt(b.courseFee)} (${b.courseDays} cursusdagen excl. reisdagen)` : ''}</span>`;
 }
 function updateMgmt() {
   document.getElementById('f-mgmt').value = '€' + MGMT[document.getElementById('f-type').value] + ' per deelnemer';
@@ -488,11 +489,47 @@ function getMonthMobs(y, m) {
   });
 }
 
+// Returns Monday-starting weeks that overlap with the given month
+function getWeeksForMonth(y, m) {
+  const firstDay = new Date(y, m - 1, 1);
+  const lastDay = new Date(y, m, 0);
+  // Find the Monday on or before the first day of the month
+  const dow = firstDay.getDay(); // 0=Sun
+  const diff = (dow === 0) ? -6 : 1 - dow;
+  let weekStart = new Date(firstDay);
+  weekStart.setDate(firstDay.getDate() + diff);
+  const weeks = [];
+  while (weekStart <= lastDay) {
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    weeks.push({ start: new Date(weekStart), end: new Date(weekEnd) });
+    weekStart.setDate(weekStart.getDate() + 7);
+  }
+  return weeks;
+}
+
+function fmtWeekLabel(wStart, wEnd, monthY, monthM) {
+  const mStart = new Date(monthY, monthM - 1, 1);
+  const mEnd = new Date(monthY, monthM, 0);
+  const ds = wStart < mStart ? mStart : wStart;
+  const de = wEnd > mEnd ? mEnd : wEnd;
+  const dFmt = d => d.getDate();
+  return `${dFmt(ds)}–${dFmt(de)} ${MNL[monthM]}`;
+}
+
+function getMobsForWeek(wStart, wEnd) {
+  return mobilities.filter(mob => {
+    const s = new Date(mob.start), e = new Date(mob.end);
+    return s <= wEnd && e >= wStart;
+  });
+}
+
 function renderCal() {
-  let html = '<div class="section-title">Planning per maand</div><table class="cal"><tr><th style="width:56px">Maand</th><th>Mobilities</th><th style="width:90px;text-align:right">Budget</th></tr>';
+  let html = '<div class="section-title">Planning per maand</div>';
   MONTHS.forEach(({y, m}) => {
-    const mobs = getMonthMobs(y, m);
-    const bud = mobs.reduce((s, mob) => {
+    const weeks = getWeeksForMonth(y, m);
+    const monthMobs = getMonthMobs(y, m);
+    const monthBud = monthMobs.reduce((s, mob) => {
       const b = calcBudget(mob), d = b.days;
       const ms = new Date(y, m - 1, 1), me = new Date(y, m, 0);
       const s2 = new Date(mob.start) > ms ? new Date(mob.start) : ms;
@@ -500,14 +537,41 @@ function renderCal() {
       const ov = Math.max(0, Math.round((e2 - s2) / 86400000) + 1);
       return s + (ov / d) * b.total;
     }, 0);
-    const chips = mobs.map(mob =>
-      `<span class="mob-chip ${TYPE_COLOR[mob.type]}" onclick="openEdit('${mob.id}')" title="${mob.title}">${mob.title}</span>`
-    ).join('');
-    html += `<tr><td class="month-label">${MNL[m]}<br><span style="font-size:10px">${y}</span></td>
-      <td>${chips || '<span style="color:#888780;font-size:11px">—</span>'}</td>
-      <td style="text-align:right;font-size:11px;color:#5f5e5a;vertical-align:middle">€${fmt(bud)}</td></tr>`;
+
+    html += `<table class="cal" style="margin-bottom:10px">
+      <thead><tr>
+        <th style="width:56px;text-align:center">${MNL[m]}<br><span style="font-size:10px;font-weight:400">${y}</span></th>
+        <th style="width:90px">Week</th>
+        <th>Mobilities</th>
+        <th style="width:90px;text-align:right">Budget</th>
+      </tr></thead><tbody>`;
+
+    weeks.forEach(({start: wS, end: wE}) => {
+      const wMobs = getMobsForWeek(wS, wE);
+      const wBud = wMobs.reduce((s, mob) => {
+        const b = calcBudget(mob), d = b.days;
+        const s2 = new Date(mob.start) > wS ? new Date(mob.start) : wS;
+        const e2 = new Date(mob.end) < wE ? new Date(mob.end) : wE;
+        const ov = Math.max(0, Math.round((e2 - s2) / 86400000) + 1);
+        return s + (ov / d) * b.total;
+      }, 0);
+      const chips = wMobs.map(mob =>
+        `<span class="mob-chip ${TYPE_COLOR[mob.type]}" onclick="openEdit('${mob.id}')" title="${mob.title}">${mob.title}</span>`
+      ).join('');
+      const label = fmtWeekLabel(wS, wE, y, m);
+      html += `<tr>
+        <td style="border:0.5px solid #d3d1c7"></td>
+        <td style="font-size:11px;color:#5f5e5a;white-space:nowrap;vertical-align:middle;padding:4px 6px;border:0.5px solid #d3d1c7">${label}</td>
+        <td style="border:0.5px solid #d3d1c7;padding:3px 4px;vertical-align:top;min-height:36px">${chips || '<span style="color:#c0bfb8;font-size:10px">—</span>'}</td>
+        <td style="text-align:right;font-size:11px;color:#5f5e5a;vertical-align:middle;border:0.5px solid #d3d1c7;padding:4px 6px">${wBud > 0 ? '€' + fmt(wBud) : ''}</td>
+      </tr>`;
+    });
+
+    html += `</tbody><tfoot><tr>
+      <td colspan="3" style="font-size:11px;color:#5f5e5a;padding:4px 6px;border-top:0.5px solid #b4b2a9;font-weight:500">Maandtotaal</td>
+      <td style="text-align:right;font-size:11px;font-weight:500;padding:4px 6px;border-top:0.5px solid #b4b2a9">€${fmt(monthBud)}</td>
+    </tr></tfoot></table>`;
   });
-  html += '</table>';
   document.getElementById('calWrap').innerHTML = html;
 }
 
