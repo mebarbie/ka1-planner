@@ -578,6 +578,10 @@ function render() {
     <div class="metric" style="border:0.5px solid #378ADD">
       <div class="metric-label" style="color:#185FA5">% van totaal (filter)</div>
       <div class="metric-value" style="color:#185FA5">${pctFilt.toFixed(1)}%</div>
+    </div>
+    <div class="metric" style="border:0.5px solid #378ADD">
+      <div class="metric-label" style="color:#185FA5">% van gebruikt (filter)</div>
+      <div class="metric-value" style="color:#185FA5">${used > 0 ? ((filtUsed / used) * 100).toFixed(1) : '0.0'}%</div>
     </div>` : `
     <div class="metric"><div class="metric-label">Mobilities</div><div class="metric-value">${mobilities.length}</div></div>
     <div class="metric"><div class="metric-label">Budget gebruikt</div><div class="metric-value">${pctTotal.toFixed(1)}%</div></div>`}`;
