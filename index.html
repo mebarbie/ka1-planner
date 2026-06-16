@@ -550,19 +550,37 @@ function render() {
     }
   }
 
-  // Metrics altijd op basis van ALLE mobilities
   const used = mobilities.reduce((s, m) => s + calcBudget(m).total, 0);
-  const pct = Math.min(100, (used / TOTAL) * 100);
-  document.getElementById('budgetBar').style.width = pct + '%';
-  document.getElementById('budgetBar').style.background = pct > 90 ? '#E24B4A' : pct > 75 ? '#EF9F27' : '#378ADD';
-
   const filtUsed = filtered.reduce((s, m) => s + calcBudget(m).total, 0);
+  const pctTotal = Math.min(100, (used / TOTAL) * 100);
+  const pctFilt  = Math.min(100, (filtUsed / TOTAL) * 100);
+
+  // Budgetbalk: toon gefilterd aandeel (blauw) bovenop totaal (grijs)
+  if (isFiltered) {
+    document.getElementById('budgetBar').style.width = pctTotal + '%';
+    document.getElementById('budgetBar').style.background =
+      `linear-gradient(to right, #378ADD ${pctFilt / pctTotal * 100}%, #b0c8e8 ${pctFilt / pctTotal * 100}%)`;
+  } else {
+    document.getElementById('budgetBar').style.width = pctTotal + '%';
+    document.getElementById('budgetBar').style.background =
+      pctTotal > 90 ? '#E24B4A' : pctTotal > 75 ? '#EF9F27' : '#378ADD';
+  }
+
   document.getElementById('metrics').innerHTML = `
     <div class="metric"><div class="metric-label">Totaal budget</div><div class="metric-value">€${fmt(TOTAL)}</div></div>
-    <div class="metric"><div class="metric-label">Gebruikt (totaal)</div><div class="metric-value ${pct > 90 ? 'danger' : ''}">€${fmt(used)}</div></div>
+    <div class="metric"><div class="metric-label">Gebruikt${isFiltered ? ' (totaal)' : ''}</div><div class="metric-value ${pctTotal > 90 ? 'danger' : ''}">€${fmt(used)}</div></div>
     <div class="metric"><div class="metric-label">Resterend</div><div class="metric-value ${(TOTAL - used) < 0 ? 'danger' : 'success'}">€${fmt(TOTAL - used)}</div></div>
-    <div class="metric"><div class="metric-label">${isFiltered ? 'Budget (gefilterd)' : 'Mobilities'}</div><div class="metric-value">${isFiltered ? '€' + fmt(filtUsed) : mobilities.length}</div></div>
-    <div class="metric"><div class="metric-label">Budget gebruikt</div><div class="metric-value">${pct.toFixed(1)}%</div></div>`;
+    ${isFiltered ? `
+    <div class="metric" style="border:0.5px solid #378ADD">
+      <div class="metric-label" style="color:#185FA5">Gebruikt (filter)</div>
+      <div class="metric-value" style="color:#185FA5">€${fmt(filtUsed)}</div>
+    </div>
+    <div class="metric" style="border:0.5px solid #378ADD">
+      <div class="metric-label" style="color:#185FA5">% van totaal (filter)</div>
+      <div class="metric-value" style="color:#185FA5">${pctFilt.toFixed(1)}%</div>
+    </div>` : `
+    <div class="metric"><div class="metric-label">Mobilities</div><div class="metric-value">${mobilities.length}</div></div>
+    <div class="metric"><div class="metric-label">Budget gebruikt</div><div class="metric-value">${pctTotal.toFixed(1)}%</div></div>`}`;
   renderCal(filtered); renderList(filtered);
 }
 
