@@ -265,22 +265,51 @@ textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;pa
 
 <!-- Settings Modal -->
 <div id="settingsBg" class="modal-bg" style="display:none">
-<div class="modal">
+<div class="modal" style="width:580px">
   <button class="close-x" onclick="closeSettings()">×</button>
   <h2>Instellingen</h2>
+
   <div style="margin-bottom:1rem">
-    <label>Erasmus+ domein</label>
-    <select id="st-domain" style="margin-top:3px">
-      <option value="ADU">ADU — Adult Education</option>
-      <option value="SCH">SCH — School Education</option>
-      <option value="VET">VET — Vocational Education & Training</option>
-    </select>
+    <label style="margin-bottom:6px;display:block">Erasmus+ domein</label>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px" id="st-domainPicker">
+      <label style="display:flex;flex-direction:column;align-items:center;border:0.5px solid #b4b2a9;border-radius:8px;padding:.6rem .5rem;cursor:pointer;font-size:12px;font-weight:400;gap:3px;text-align:center" id="st-lbl-ADU">
+        <input type="radio" name="st-domain" value="ADU" style="width:auto" onchange="stDomainChange()">
+        <span style="font-size:20px">🎓</span>
+        <strong>ADU</strong>
+        <span style="font-size:11px;color:#5f5e5a">Adult Education</span>
+      </label>
+      <label style="display:flex;flex-direction:column;align-items:center;border:0.5px solid #b4b2a9;border-radius:8px;padding:.6rem .5rem;cursor:pointer;font-size:12px;font-weight:400;gap:3px;text-align:center" id="st-lbl-SCH">
+        <input type="radio" name="st-domain" value="SCH" style="width:auto" onchange="stDomainChange()">
+        <span style="font-size:20px">🏫</span>
+        <strong>SCH</strong>
+        <span style="font-size:11px;color:#5f5e5a">School Education</span>
+      </label>
+      <label style="display:flex;flex-direction:column;align-items:center;border:0.5px solid #b4b2a9;border-radius:8px;padding:.6rem .5rem;cursor:pointer;font-size:12px;font-weight:400;gap:3px;text-align:center" id="st-lbl-VET">
+        <input type="radio" name="st-domain" value="VET" style="width:auto" onchange="stDomainChange()">
+        <span style="font-size:20px">🔧</span>
+        <strong>VET</strong>
+        <span style="font-size:11px;color:#5f5e5a">Vocational Education & Training</span>
+      </label>
+    </div>
   </div>
-  <div style="margin-bottom:1rem"><label>Toegekend budget (€)</label><input type="number" id="st-budget" min="1" step="1000"></div>
-  <div style="margin-bottom:1rem"><label>JSONBin Bin ID</label><input id="st-binid"></div>
-  <div style="margin-bottom:1rem"><label>JSONBin API Key</label><input id="st-apikey" type="password"></div>
-  <div style="margin-bottom:1rem"><label>Nieuw beheerderswachtwoord (leeg = ongewijzigd)</label><input id="st-adminpw" type="password"></div>
-  <div style="margin-bottom:1rem"><label>Projectnaam</label><input id="st-name"></div>
+
+  <div style="margin-bottom:1rem">
+    <label>Toegekend budget voor dit domein (€)</label>
+    <input type="number" id="st-budget" min="1" step="1000" style="margin-top:3px">
+    <div style="font-size:11px;color:#5f5e5a;margin-top:3px">Vul het volledige toegekende Erasmus+ budget in voor dit domein.</div>
+  </div>
+
+  <div style="margin-bottom:1rem"><label>Projectnaam</label><input id="st-name" style="margin-top:3px"></div>
+
+  <details style="margin-bottom:1rem">
+    <summary style="font-size:13px;cursor:pointer;color:#5f5e5a;user-select:none">JSONBin &amp; beheerderstoegang ▸</summary>
+    <div style="margin-top:.75rem;display:flex;flex-direction:column;gap:.75rem">
+      <div><label>JSONBin Bin ID</label><input id="st-binid" style="margin-top:3px"></div>
+      <div><label>JSONBin API Key</label><input id="st-apikey" type="password" style="margin-top:3px"></div>
+      <div><label>Nieuw beheerderswachtwoord (leeg = ongewijzigd)</label><input id="st-adminpw" type="password" style="margin-top:3px"></div>
+    </div>
+  </details>
+
   <div class="btn-row">
     <button onclick="closeSettings()">Annuleren</button>
     <button class="primary" onclick="settingsSave()">Opslaan</button>
@@ -809,18 +838,33 @@ function printSec(id) {
 }
 
 // ── Instellingen ───────────────────────────────────────────
+function stDomainChange() {
+  const val = document.querySelector('input[name="st-domain"]:checked')?.value;
+  ['ADU','SCH','VET'].forEach(d => {
+    const lbl = document.getElementById('st-lbl-' + d);
+    if (!lbl) return;
+    lbl.style.borderColor = d === val ? '#378ADD' : '#b4b2a9';
+    lbl.style.background  = d === val ? '#EBF4FC' : '';
+  });
+}
+
 function openSettings() {
-  document.getElementById('st-domain').value = cfg.domain || 'ADU';
+  const domain = cfg.domain || 'ADU';
+  // Zet de juiste radio aan
+  const radio = document.querySelector(`input[name="st-domain"][value="${domain}"]`);
+  if (radio) radio.checked = true;
+  stDomainChange();
   document.getElementById('st-budget').value = cfg.budget || 360000;
-  document.getElementById('st-binid').value = cfg.binId || '';
+  document.getElementById('st-binid').value  = cfg.binId  || '';
   document.getElementById('st-apikey').value = cfg.apiKey || '';
-  document.getElementById('st-name').value = cfg.name || '';
+  document.getElementById('st-name').value   = cfg.name   || '';
   document.getElementById('st-adminpw').value = '';
   document.getElementById('settingsBg').style.display = 'flex';
 }
 function closeSettings() { document.getElementById('settingsBg').style.display = 'none'; }
 function settingsSave() {
-  cfg.domain = document.getElementById('st-domain').value;
+  const domainRadio = document.querySelector('input[name="st-domain"]:checked');
+  cfg.domain = domainRadio ? domainRadio.value : (cfg.domain || 'ADU');
   cfg.budget = parseInt(document.getElementById('st-budget').value) || 360000;
   cfg.binId  = document.getElementById('st-binid').value.trim();
   cfg.apiKey = document.getElementById('st-apikey').value.trim();
@@ -829,8 +873,8 @@ function settingsSave() {
   if (pw) cfg.adminPwHash = simpleHash(pw);
   saveCfg();
   window.BUDGET_TOTAL = cfg.budget;
-  startApp();
   closeSettings();
+  startApp();
   toast('Instellingen opgeslagen');
 }
 
