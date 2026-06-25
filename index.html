@@ -3,181 +3,298 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KA1 ADU — Mobility Planner 2026–2027</title>
+<title>KA1 Mobility Planner — Katholiek Onderwijs Vlaanderen</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
+/* ── KOV Kleurenpalet ── */
+:root {
+  --kov-oranje: #F26522;
+  --kov-paars:  #6B2D8B;
+  --kov-groen:  #3AAA35;
+  --kov-blauw:  #009FE3;
+  --kov-bg:     #F7F6F3;
+  --kov-card:   #FFFFFF;
+  --kov-border: #E0DED8;
+  --kov-text:   #1A1A18;
+  --kov-muted:  #6B6965;
+  --kov-danger: #C0392B;
+  --kov-success:#27AE60;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,-apple-system,sans-serif;background:#f5f5f3;color:#1a1a18;font-size:15px;line-height:1.6}
-a{color:#185FA5}
-h1{font-size:20px;font-weight:500;margin-bottom:.25rem}
-.subtitle{font-size:13px;color:#5f5e5a;margin-bottom:1.5rem}
-.container{max-width:1100px;margin:0 auto;padding:1.5rem 1rem}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--kov-bg);color:var(--kov-text);font-size:15px;line-height:1.6}
+
+/* ── Header ── */
+.header{background:var(--kov-paars);color:#fff;padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.header-logo{display:flex;align-items:center;gap:.6rem;text-decoration:none}
+.logo-star{width:44px;height:44px;flex-shrink:0}
+.logo-text{line-height:1.1}
+.logo-text .kov{font-size:11px;font-weight:600;color:rgba(255,255,255,.75);letter-spacing:.08em;text-transform:uppercase}
+.logo-text .name{font-size:15px;font-weight:700;color:#fff}
+.header-title{font-size:16px;font-weight:500;color:rgba(255,255,255,.9);margin-left:.5rem;padding-left:1rem;border-left:1px solid rgba(255,255,255,.3)}
+.header-spacer{flex:1}
+.header-user{font-size:12px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:.5rem}
+
+/* ── Domain tabs ── */
+.domain-bar{background:var(--kov-paars);padding:0 1.5rem;display:flex;gap:4px;border-top:1px solid rgba(255,255,255,.15)}
+.domain-tab{padding:.5rem 1.25rem;font-size:13px;font-weight:500;color:rgba(255,255,255,.65);border:none;background:transparent;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s}
+.domain-tab:hover{color:#fff}
+.domain-tab.active{color:#fff;border-bottom-color:var(--kov-oranje)}
+
+/* ── Container ── */
+.container{max-width:1140px;margin:0 auto;padding:1.5rem 1.25rem}
+
+/* ── Top bar ── */
 .top-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:1.25rem}
-.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1rem}
-.metric{background:#fff;border-radius:8px;border:0.5px solid #d3d1c7;padding:.75rem 1rem}
-.metric-label{font-size:12px;color:#5f5e5a;margin-bottom:4px}
-.metric-value{font-size:20px;font-weight:500}
-.metric-value.danger{color:#A32D2D}
-.metric-value.success{color:#3B6D11}
-.budget-bar-wrap{background:#e8e8e4;border-radius:8px;height:12px;overflow:hidden;margin-bottom:1.5rem}
-.budget-bar{height:100%;background:#378ADD;transition:width .4s;border-radius:8px}
-.section-title{font-size:14px;font-weight:500;color:#5f5e5a;margin-bottom:.75rem;margin-top:1.5rem}
-.legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:1rem;font-size:12px;color:#5f5e5a}
+.domain-badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;margin-right:.25rem}
+.badge-ADU{background:#EDE0F5;color:var(--kov-paars)}
+.badge-SCH{background:#FEE8D6;color:#C0510A}
+.badge-VET{background:#D6F0D5;color:#1E7A1A}
+
+/* ── Metrics ── */
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:1rem}
+.metric{background:var(--kov-card);border-radius:10px;border:0.5px solid var(--kov-border);padding:.75rem 1rem}
+.metric-label{font-size:11px;color:var(--kov-muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em}
+.metric-value{font-size:21px;font-weight:600}
+.metric-value.danger{color:var(--kov-danger)}
+.metric-value.success{color:var(--kov-success)}
+.metric.accent{border-color:var(--kov-oranje)}
+.metric.accent .metric-label{color:var(--kov-oranje)}
+.metric.accent .metric-value{color:var(--kov-oranje)}
+
+/* ── Budget bar ── */
+.budget-bar-wrap{background:var(--kov-border);border-radius:8px;height:12px;overflow:hidden;margin-bottom:1.5rem}
+.budget-bar{height:100%;border-radius:8px;transition:width .4s,background .3s}
+
+/* ── Legend ── */
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:1.25rem;font-size:12px;color:var(--kov-muted)}
 .legend-item{display:flex;align-items:center;gap:5px}
 .legend-dot{width:10px;height:10px;border-radius:2px}
-.color-course{background:#B5D4F4;color:#0C447C}
+
+/* ── Chips ── */
+.color-course  {background:#B5D4F4;color:#0C447C}
 .color-jobshadow{background:#C0DD97;color:#27500A}
 .color-teaching{background:#FAC775;color:#633806}
-.color-expert{background:#F4C0D1;color:#72243E}
+.color-expert  {background:#F4C0D1;color:#72243E}
+
+/* ── Section ── */
+.section-title{font-size:13px;font-weight:600;color:var(--kov-muted);margin-bottom:.75rem;margin-top:1.5rem;text-transform:uppercase;letter-spacing:.05em}
+
+/* ── Filter bar ── */
+.filter-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:.5rem}
+.filter-bar select{font-size:12px;padding:5px 10px;border-radius:6px;border:0.5px solid var(--kov-border);background:#fff;color:var(--kov-text);max-width:280px}
+.btn-ghost{font-size:12px;padding:4px 10px;border-radius:6px;border:0.5px solid var(--kov-border);background:#fff;color:var(--kov-danger);cursor:pointer}
+.filter-info{font-size:12px;color:var(--kov-muted);margin-bottom:.75rem;min-height:1.4em}
+
+/* ── Calendar ── */
 .cal{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px}
-.cal th{padding:5px 4px;text-align:left;font-weight:500;color:#5f5e5a;border-bottom:0.5px solid #d3d1c7;background:#f0efe8}
-.cal td{padding:3px 5px;vertical-align:middle;border:0.5px solid #d3d1c7}
-.cal tfoot td{font-size:11px;font-weight:500;border-top:0.5px solid #b4b2a9;padding:4px 5px}
-.mob-chip{display:block;border-radius:3px;padding:2px 5px;font-size:11px;margin-bottom:2px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal th{padding:5px 6px;text-align:left;font-weight:600;color:var(--kov-muted);border-bottom:0.5px solid var(--kov-border);background:#F0EFE8;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.cal td{padding:3px 5px;vertical-align:middle;border:0.5px solid var(--kov-border)}
+.cal tfoot td{font-size:11px;font-weight:600;border-top:0.5px solid #b4b2a9;padding:5px 6px;background:#fafaf8}
+.mob-chip{display:block;border-radius:4px;padding:2px 6px;font-size:11px;margin-bottom:2px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mob-chip:hover{opacity:.75}
-.card{background:#fff;border:0.5px solid #d3d1c7;border-radius:10px;padding:.875rem 1rem;margin-bottom:8px;cursor:pointer}
-.card:hover{border-color:#888780}
-.cluster-tag{font-size:10px;padding:2px 6px;border-radius:12px;background:#f0efe8;color:#5f5e5a;border:0.5px solid #d3d1c7;display:inline-block}
-.cluster-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:.35rem}
+
+/* ── Cards ── */
+.mob-card{background:var(--kov-card);border:0.5px solid var(--kov-border);border-radius:10px;padding:.875rem 1rem;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
+.mob-card:hover{border-color:var(--kov-paars)}
+.cluster-tag{font-size:10px;padding:2px 7px;border-radius:12px;background:#F0EFE8;color:var(--kov-muted);border:0.5px solid var(--kov-border);display:inline-block}
+.cluster-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:.4rem}
+
+/* ── Buttons ── */
+button{font-family:inherit;cursor:pointer}
+.btn{font-size:13px;padding:7px 16px;border-radius:8px;border:0.5px solid var(--kov-border);background:#fff;color:var(--kov-text)}
+.btn:hover{background:#f0efe8}
+.btn-primary{background:var(--kov-oranje);color:#fff;border-color:var(--kov-oranje)}
+.btn-primary:hover{background:#D4561A}
+.btn-danger{color:var(--kov-danger);border-color:var(--kov-danger)}
+.btn-danger:hover{background:#FCEBEB}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ── Modal ── */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:999;padding:1rem}
-.modal{background:#fff;border-radius:12px;border:0.5px solid #d3d1c7;padding:1.5rem;width:560px;max-width:100%;max-height:90vh;overflow-y:auto}
-.modal h2{font-size:17px;font-weight:500;margin-bottom:1rem}
+.modal{background:#fff;border-radius:14px;border:0.5px solid var(--kov-border);padding:1.75rem;width:580px;max-width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.18)}
+.modal h2{font-size:17px;font-weight:600;margin-bottom:1.25rem;color:var(--kov-paars)}
+.close-x{float:right;border:none;background:none;font-size:22px;cursor:pointer;color:var(--kov-muted);padding:0;line-height:1;margin-top:-4px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .form-row.full{grid-template-columns:1fr}
-label{font-size:12px;color:#5f5e5a;display:block;margin-bottom:3px}
-input,select,textarea{width:100%;font-size:13px;padding:7px 9px;border:0.5px solid #b4b2a9;border-radius:8px;background:#fff;color:#1a1a18;font-family:inherit}
-input:focus,select:focus{outline:2px solid #378ADD;outline-offset:1px}
-input[readonly]{background:#f5f5f3;color:#5f5e5a}
-.btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:1rem;flex-wrap:wrap}
-button{font-size:13px;padding:7px 16px;border-radius:8px;border:0.5px solid #b4b2a9;background:#fff;color:#1a1a18;cursor:pointer;font-family:inherit}
-button:hover{background:#f0efe8}
-button.primary{background:#378ADD;color:#fff;border-color:#378ADD}
-button.primary:hover{background:#185FA5}
-button.danger-btn{color:#A32D2D;border-color:#A32D2D}
-button.danger-btn:hover{background:#FCEBEB}
-button:disabled{opacity:.45;cursor:not-allowed}
-.budget-preview{background:#f5f5f3;border-radius:8px;padding:.75rem 1rem;font-size:12px;margin-top:.5rem;line-height:1.8}
+label{font-size:12px;color:var(--kov-muted);display:block;margin-bottom:3px;font-weight:500}
+input,select,textarea{width:100%;font-size:13px;padding:7px 10px;border:0.5px solid #b4b2a9;border-radius:8px;background:#fff;color:var(--kov-text);font-family:inherit}
+input:focus,select:focus{outline:2px solid var(--kov-oranje);outline-offset:1px;border-color:transparent}
+input[readonly]{background:#f5f5f3;color:var(--kov-muted)}
+.btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:1.25rem;flex-wrap:wrap}
+.budget-preview{background:#F7F6F3;border-radius:8px;padding:.75rem 1rem;font-size:12px;margin-top:.5rem;line-height:1.9;border:0.5px solid var(--kov-border)}
 .checkbox-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.checkbox-grid label{display:flex;align-items:flex-start;gap:6px;font-size:12px;color:#1a1a18;cursor:pointer;font-weight:400}
+.checkbox-grid label{display:flex;align-items:flex-start;gap:6px;font-size:12px;color:var(--kov-text);cursor:pointer;font-weight:400}
 .checkbox-grid input[type=checkbox]{width:auto;margin-top:2px}
-.close-x{float:right;border:none;background:none;font-size:20px;cursor:pointer;color:#5f5e5a;padding:0;line-height:1}
-.exp-tabs{display:flex;gap:4px;border-bottom:0.5px solid #d3d1c7;margin-bottom:1rem}
-.exp-tab{font-size:13px;padding:6px 14px;border:0.5px solid transparent;border-bottom:none;border-radius:8px 8px 0 0;cursor:pointer;background:transparent;color:#5f5e5a}
-.exp-tab.active{background:#fff;border-color:#d3d1c7;color:#1a1a18;border-bottom:1px solid #fff;margin-bottom:-1px}
+
+/* ── Auth screen ── */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--kov-bg);padding:1rem}
+.auth-box{background:#fff;border-radius:14px;border:0.5px solid var(--kov-border);padding:2rem;width:420px;max-width:100%;box-shadow:0 4px 24px rgba(0,0,0,.1)}
+.auth-logo{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem}
+.auth-box h2{font-size:18px;font-weight:600;color:var(--kov-paars);margin-bottom:.35rem}
+.auth-box p{font-size:13px;color:var(--kov-muted);margin-bottom:1.25rem}
+.auth-field{margin-bottom:1rem}
+.auth-tabs{display:flex;gap:0;margin-bottom:1.25rem;border:0.5px solid var(--kov-border);border-radius:8px;overflow:hidden}
+.auth-tab{flex:1;padding:7px;font-size:13px;border:none;background:#fff;color:var(--kov-muted);cursor:pointer;font-family:inherit}
+.auth-tab.active{background:var(--kov-paars);color:#fff;font-weight:500}
+.auth-err{font-size:12px;color:var(--kov-danger);margin-top:.5rem;min-height:1.2em}
+
+/* ── Export ── */
+.exp-tabs{display:flex;gap:4px;border-bottom:0.5px solid var(--kov-border);margin-bottom:1rem}
+.exp-tab{font-size:13px;padding:6px 14px;border:0.5px solid transparent;border-bottom:none;border-radius:8px 8px 0 0;cursor:pointer;background:transparent;color:var(--kov-muted)}
+.exp-tab.active{background:#fff;border-color:var(--kov-border);color:var(--kov-text);border-bottom:1px solid #fff;margin-bottom:-1px}
 .exp-section{display:none}.exp-section.active{display:block}
 .exp-table{width:100%;border-collapse:collapse;font-size:11px}
-.exp-table th{padding:5px 6px;text-align:left;font-weight:500;color:#5f5e5a;border-bottom:0.5px solid #d3d1c7;background:#f5f5f3;white-space:nowrap}
+.exp-table th{padding:5px 6px;text-align:left;font-weight:600;color:var(--kov-muted);border-bottom:0.5px solid var(--kov-border);background:#f5f5f3;white-space:nowrap}
 .exp-table td{padding:5px 6px;border-bottom:0.5px solid #e8e8e4;vertical-align:top}
-.exp-table tfoot td{font-weight:500;border-top:0.5px solid #b4b2a9;padding-top:8px}
-textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;padding:8px;background:#f5f5f3;resize:vertical;border:0.5px solid #b4b2a9;border-radius:8px}
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+.exp-table tfoot td{font-weight:600;border-top:0.5px solid #b4b2a9;padding-top:8px}
+textarea.csv-out{width:100%;height:130px;font-size:11px;font-family:monospace;padding:8px;background:#f5f5f3;resize:vertical;border:0.5px solid var(--kov-border);border-radius:8px}
+
+/* ── Misc ── */
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#1a1a18;color:#fff;padding:.6rem 1.2rem;border-radius:8px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--kov-text);color:#fff;padding:.65rem 1.25rem;border-radius:8px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}
-.setup-box{background:#fff;border-radius:12px;border:0.5px solid #d3d1c7;padding:2rem;max-width:500px;margin:4rem auto}
-.setup-box h2{font-size:18px;font-weight:500;margin-bottom:.5rem}
-.setup-box p{font-size:13px;color:#5f5e5a;margin-bottom:1.25rem;line-height:1.7}
-.setup-box .field{margin-bottom:1rem}
-@media(max-width:600px){.form-row{grid-template-columns:1fr}.checkbox-grid{grid-template-columns:1fr}}
+.empty-state{font-size:13px;color:var(--kov-muted);padding:.5rem 0}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}.checkbox-grid{grid-template-columns:1fr}.domain-bar{overflow-x:auto}.metric-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 
-<div id="setupScreen" style="display:none">
-  <div class="setup-box">
-    <h2>KA1 Planner — eerste keer instellen</h2>
-    <p>Maak een gratis account op <a href="https://jsonbin.io" target="_blank">jsonbin.io</a>, maak een nieuwe bin aan met inhoud <code>{"mobilities":[]}</code> en kopieer de <strong>Bin ID</strong> en je <strong>API key</strong> hieronder.</p>
+<!-- ══════════════════════════════════════════════
+     AUTH SCREEN
+═══════════════════════════════════════════════ -->
+<div id="authScreen" class="auth-wrap">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <!-- KOV Logo SVG -->
+      <svg class="logo-star" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35" fill="#6B2D8B"/>
+        <circle cx="50" cy="50" r="22" fill="white"/>
+        <text x="50" y="56" text-anchor="middle" font-size="18" font-weight="900" fill="#6B2D8B" font-family="system-ui">KOV</text>
+      </svg>
+      <div>
+        <div style="font-size:11px;color:var(--kov-muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em">Katholiek Onderwijs Vlaanderen</div>
+        <div style="font-size:16px;font-weight:700;color:var(--kov-paars)">KA1 Mobility Planner</div>
+      </div>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuth('login')">Aanmelden</button>
+      <button class="auth-tab" onclick="switchAuth('register')">Registreren</button>
+    </div>
+    <div id="loginForm">
+      <div class="auth-field"><label>E-mailadres</label><input type="email" id="login-email" placeholder="naam@school.be"></div>
+      <div class="auth-field"><label>Wachtwoord</label><input type="password" id="login-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn btn-primary" style="width:100%" onclick="doLogin()" id="loginBtn">Aanmelden</button>
+      <div class="auth-err" id="login-err"></div>
+    </div>
+    <div id="registerForm" style="display:none">
+      <div class="auth-field"><label>E-mailadres</label><input type="email" id="reg-email" placeholder="naam@school.be"></div>
+      <div class="auth-field"><label>Wachtwoord (min. 6 tekens)</label><input type="password" id="reg-pw" placeholder="••••••••"></div>
+      <button class="btn btn-primary" style="width:100%" onclick="doRegister()" id="regBtn">Account aanmaken</button>
+      <div class="auth-err" id="reg-err"></div>
+    </div>
+  </div>
+</div>
 
-    <div class="field">
-      <label>Erasmus+ domein</label>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px" id="domainPicker">
-        <label style="display:flex;flex-direction:column;align-items:center;border:0.5px solid #b4b2a9;border-radius:8px;padding:.75rem .5rem;cursor:pointer;font-size:13px;font-weight:400;gap:4px;text-align:center" id="lbl-ADU">
-          <input type="radio" name="domain" value="ADU" style="width:auto" onchange="domainChange()" checked>
-          <span style="font-size:22px">🎓</span>
-          <strong>ADU</strong>
-          <span style="font-size:11px;color:#5f5e5a">Adult Education</span>
-        </label>
-        <label style="display:flex;flex-direction:column;align-items:center;border:0.5px solid #b4b2a9;border-radius:8px;padding:.75rem .5rem;cursor:pointer;font-size:13px;font-weight:400;gap:4px;text-align:center" id="lbl-SCH">
-          <input type="radio" name="domain" value="SCH" style="width:auto" onchange="domainChange()">
-          <span style="font-size:22px">🏫</span>
-          <strong>SCH</strong>
-          <span style="font-size:11px;color:#5f5e5a">School Education</span>
-        </label>
-        <label style="display:flex;flex-direction:column;align-items:center;border:0.5px solid #b4b2a9;border-radius:8px;padding:.75rem .5rem;cursor:pointer;font-size:13px;font-weight:400;gap:4px;text-align:center" id="lbl-VET">
-          <input type="radio" name="domain" value="VET" style="width:auto" onchange="domainChange()">
-          <span style="font-size:22px">🔧</span>
-          <strong>VET</strong>
-          <span style="font-size:11px;color:#5f5e5a">Vocational Education & Training</span>
-        </label>
+<!-- ══════════════════════════════════════════════
+     MAIN APP
+═══════════════════════════════════════════════ -->
+<div id="mainApp" style="display:none">
+
+  <!-- Header -->
+  <div class="header">
+    <a class="header-logo" href="#">
+      <svg class="logo-star" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="50,5 61,35 95,35 68,57 79,91 50,70 21,91 32,57 5,35 39,35" fill="white" fill-opacity=".25"/>
+        <circle cx="50" cy="50" r="22" fill="white"/>
+        <text x="50" y="56" text-anchor="middle" font-size="18" font-weight="900" fill="#6B2D8B" font-family="system-ui">KOV</text>
+      </svg>
+      <div class="logo-text">
+        <div class="kov">Katholiek Onderwijs Vlaanderen</div>
+        <div class="name">KA1 Mobility Planner 2026–2027</div>
+      </div>
+    </a>
+    <div class="header-spacer"></div>
+    <div class="header-user">
+      <span id="headerEmail"></span>
+      <button class="btn" style="font-size:11px;padding:4px 10px;color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.3);background:transparent" onclick="doLogout()">Afmelden</button>
+    </div>
+  </div>
+
+  <!-- Domain tabs -->
+  <div class="domain-bar">
+    <button class="domain-tab active" id="tab-ADU" onclick="switchDomain('ADU')">🎓 ADU — Adult Education</button>
+    <button class="domain-tab" id="tab-SCH" onclick="switchDomain('SCH')">🏫 SCH — School Education</button>
+    <button class="domain-tab" id="tab-VET" onclick="switchDomain('VET')">🔧 VET — Vocational Education</button>
+  </div>
+
+  <div class="container">
+    <!-- Domain header + budget instellen -->
+    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem;margin-top:.25rem">
+      <div>
+        <h1 id="domainTitle" style="font-size:20px;font-weight:600;color:var(--kov-paars)">ADU — Adult Education</h1>
+        <div id="domainSub" style="font-size:13px;color:var(--kov-muted)">KA121 · Budget: €360.000</div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+        <button class="btn" onclick="openBudgetModal()" style="font-size:12px">✏️ Budget instellen</button>
       </div>
     </div>
 
-    <div class="field">
-      <label>Toegekend budget voor dit domein (€)</label>
-      <input type="number" id="s-budget" value="360000" min="1" step="1000" placeholder="Bv. 360000">
-      <div style="font-size:11px;color:#5f5e5a;margin-top:3px">Vul het volledige toegekende Erasmus+ budget in voor dit domein.</div>
+    <!-- Top bar -->
+    <div class="top-bar">
+      <button class="btn btn-primary" onclick="openAdd()">+ Mobiliteit toevoegen</button>
+      <button class="btn" onclick="openExport()">↓ Exporteren</button>
+      <button class="btn" onclick="loadMobilities()" id="refreshBtn">↻ Vernieuwen</button>
     </div>
 
-    <div class="field"><label>Projectnaam (optioneel)</label><input id="s-name" placeholder="KA121-2026 Katholiek Onderwijs Vlaanderen"></div>
-    <div class="field"><label>JSONBin Bin ID</label><input id="s-binid" placeholder="64abc123..."></div>
-    <div class="field"><label>JSONBin API Key</label><input id="s-apikey" type="password" placeholder="$2b$10$..."></div>
-    <div class="field"><label>Beheerderswachtwoord (voor verwijderen)</label><input id="s-adminpw" type="password" placeholder="Kies een wachtwoord"></div>
-    <button class="primary" onclick="setupSave()" style="width:100%">Opslaan en starten</button>
+    <!-- Metrics -->
+    <div class="metric-grid" id="metrics"></div>
+    <div class="budget-bar-wrap"><div class="budget-bar" id="budgetBar"></div></div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot color-course"></span>Cursus</span>
+      <span class="legend-item"><span class="legend-dot color-jobshadow"></span>Jobshadowing</span>
+      <span class="legend-item"><span class="legend-dot color-teaching"></span>Teaching assignment</span>
+      <span class="legend-item"><span class="legend-dot color-expert"></span>Invited expert</span>
+    </div>
+
+    <!-- Filter bar -->
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:.5rem">
+      <span style="font-size:13px;font-weight:500;color:var(--kov-muted)">Filter:</span>
+      <select id="filter-goal" onchange="applyFilter()" style="font-size:12px;padding:5px 10px;border-radius:6px;border:0.5px solid var(--kov-border);max-width:300px">
+        <option value="">Alle doelstellingen / clusters</option>
+      </select>
+      <select id="filter-type" onchange="applyFilter()" style="font-size:12px;padding:5px 10px;border-radius:6px;border:0.5px solid var(--kov-border)">
+        <option value="">Alle types</option>
+        <option value="course">Cursus</option>
+        <option value="jobshadow">Jobshadowing</option>
+        <option value="teaching">Teaching assignment</option>
+        <option value="expert">Invited expert</option>
+      </select>
+      <button class="btn-ghost" id="clearFilterBtn" style="display:none" onclick="clearFilters()">✕ Wissen</button>
+    </div>
+    <div class="filter-info" id="filterInfo"></div>
+
+    <!-- Calendar -->
+    <div class="section-title">Planning per maand</div>
+    <div id="calWrap"></div>
+
+    <!-- List -->
+    <div class="section-title">Alle mobilities</div>
+    <div id="mobList"></div>
   </div>
 </div>
 
-<div id="app" style="display:none">
-<div class="container">
-  <h1 id="appTitle">KA1 ADU — Mobility Planner 2026–2027</h1>
-  <p class="subtitle" id="appSubtitle">Katholiek Onderwijs Vlaanderen · KA121 Adult Education · Budget: €360.000</p>
+<!-- ══════ MODALS ══════ -->
 
-  <div class="top-bar">
-    <button class="primary" onclick="openAdd()">+ Mobiliteit toevoegen</button>
-    <button onclick="openExport()">↓ Exporteren</button>
-    <button onclick="loadData()" id="refreshBtn">↻ Vernieuwen</button>
-    <button onclick="openSettings()" style="margin-left:auto">⚙ Instellingen</button>
-  </div>
-
-  <div class="metric-grid" id="metrics"></div>
-  <div class="budget-bar-wrap"><div class="budget-bar" id="budgetBar"></div></div>
-
-  <div class="legend">
-    <span class="legend-item"><span class="legend-dot color-course"></span>Cursus</span>
-    <span class="legend-item"><span class="legend-dot color-jobshadow"></span>Jobshadowing</span>
-    <span class="legend-item"><span class="legend-dot color-teaching"></span>Teaching assignment</span>
-    <span class="legend-item"><span class="legend-dot color-expert"></span>Invited expert</span>
-  </div>
-
-  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:.75rem;margin-top:1.5rem">
-    <div class="section-title" style="margin:0">Overzicht</div>
-    <select id="filter-cluster" onchange="render()" style="font-size:12px;padding:4px 8px;border-radius:6px;border:0.5px solid #b4b2a9;background:#fff;color:#1a1a18">
-      <option value="">Alle clusters</option>
-    </select>
-    <select id="filter-type" onchange="render()" style="font-size:12px;padding:4px 8px;border-radius:6px;border:0.5px solid #b4b2a9;background:#fff;color:#1a1a18">
-      <option value="">Alle types</option>
-      <option value="course">Cursus</option>
-      <option value="jobshadow">Jobshadowing</option>
-      <option value="teaching">Teaching assignment</option>
-      <option value="expert">Invited expert</option>
-    </select>
-    <button id="clearFilter" onclick="clearFilters()" style="font-size:12px;padding:4px 10px;display:none">✕ Filter wissen</button>
-  </div>
-  <div id="filterInfo" style="font-size:12px;color:#5f5e5a;margin-bottom:.75rem"></div>
-
-  <div class="section-title" style="margin-top:0">Planning per maand</div>
-  <div id="calWrap"></div>
-
-  <div class="section-title">Alle mobilities</div>
-  <div id="mobList"></div>
-</div>
-</div>
-
-<!-- Add/Edit Modal -->
-<div id="modalBg" class="modal-bg" style="display:none">
+<!-- Add/Edit -->
+<div id="mobModalBg" class="modal-bg" style="display:none">
 <div class="modal">
   <button class="close-x" onclick="closeModal()">×</button>
-  <h2 id="modalTitle">Mobiliteit toevoegen</h2>
+  <h2 id="mobModalTitle">Mobiliteit toevoegen</h2>
   <div class="form-row">
-    <div><label>Titel</label><input id="f-title" placeholder="Bv. Taalcursus Barcelona"></div>
+    <div><label>Titel</label><input id="f-title" placeholder="Bv. AI-cursus Barcelona"></div>
     <div><label>Type</label>
       <select id="f-type" onchange="updateMgmt()">
         <option value="course">Cursus</option>
@@ -215,9 +332,9 @@ textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;pa
     <div><label>Aantal deelnemers</label><input type="number" id="f-participants" value="1" min="1" onchange="updatePreview()"></div>
     <div><label>Management fee</label><input id="f-mgmt" readonly></div>
   </div>
-  <div class="form-row full">
-    <div><label>Clusters (meerdere mogelijk)</label>
-      <div class="checkbox-grid" id="clusterChecks"></div>
+  <div class="form-row full" id="goalSection">
+    <div><label id="goalLabel">Clusters / doelstellingen</label>
+      <div class="checkbox-grid" id="goalChecks"></div>
     </div>
   </div>
   <div class="form-row full">
@@ -225,110 +342,74 @@ textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;pa
   </div>
   <div class="budget-preview" id="budgetPreview"><strong>Geschat budget</strong>: vul formulier in</div>
   <div class="btn-row">
-    <button id="deleteBtn" class="danger-btn" style="display:none;margin-right:auto" onclick="deleteEntry()">Verwijderen</button>
-    <button onclick="closeModal()">Annuleren</button>
-    <button class="primary" id="saveBtn" onclick="saveEntry()">Opslaan</button>
+    <button id="deleteBtn" class="btn btn-danger" style="display:none;margin-right:auto" onclick="deleteEntry()">Verwijderen</button>
+    <button class="btn" onclick="closeModal()">Annuleren</button>
+    <button class="btn btn-primary" id="saveBtn" onclick="saveEntry()">Opslaan</button>
   </div>
 </div>
 </div>
 
-<!-- Export Modal -->
+<!-- Budget instellen -->
+<div id="budgetModalBg" class="modal-bg" style="display:none">
+<div class="modal" style="width:420px">
+  <button class="close-x" onclick="closeBudgetModal()">×</button>
+  <h2>Budget instellen</h2>
+  <p style="font-size:13px;color:var(--kov-muted);margin-bottom:1rem">Vul het volledige toegekende Erasmus+ budget in voor domein <strong id="budgetDomainLabel"></strong>.</p>
+  <div style="margin-bottom:1rem"><label>Toegekend budget (€)</label><input type="number" id="budgetInput" min="1" step="1000" style="margin-top:4px"></div>
+  <div class="btn-row">
+    <button class="btn" onclick="closeBudgetModal()">Annuleren</button>
+    <button class="btn btn-primary" onclick="saveBudget()">Opslaan</button>
+  </div>
+</div>
+</div>
+
+<!-- Export -->
 <div id="exportBg" class="modal-bg" style="display:none">
-<div class="modal" style="width:720px">
+<div class="modal" style="width:740px">
   <button class="close-x" onclick="closeExport()">×</button>
   <h2>Exporteren</h2>
   <div class="exp-tabs">
-    <button class="exp-tab active" onclick="switchTab('tab-ov',this)">Overzicht</button>
-    <button class="exp-tab" onclick="switchTab('tab-cl',this)">Per cluster</button>
-    <button class="exp-tab" onclick="switchTab('tab-ty',this)">Per type</button>
-    <button class="exp-tab" onclick="switchTab('tab-csv',this)">CSV</button>
+    <button class="exp-tab active" onclick="switchExpTab('tab-ov',this)">Overzicht</button>
+    <button class="exp-tab" onclick="switchExpTab('tab-goal',this)">Per doelstelling</button>
+    <button class="exp-tab" onclick="switchExpTab('tab-ty',this)">Per type</button>
+    <button class="exp-tab" onclick="switchExpTab('tab-csv',this)">CSV</button>
   </div>
   <div id="tab-ov" class="exp-section active"><div id="exp-ov"></div>
-    <div class="btn-row"><button class="primary" onclick="printSec('exp-ov')">🖨 Afdrukken / PDF</button></div>
-  </div>
-  <div id="tab-cl" class="exp-section"><div id="exp-cl"></div>
-    <div class="btn-row"><button class="primary" onclick="printSec('exp-cl')">🖨 Afdrukken / PDF</button></div>
-  </div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="printSec('exp-ov')">🖨 PDF</button></div></div>
+  <div id="tab-goal" class="exp-section"><div id="exp-goal"></div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="printSec('exp-goal')">🖨 PDF</button></div></div>
   <div id="tab-ty" class="exp-section"><div id="exp-ty"></div>
-    <div class="btn-row"><button class="primary" onclick="printSec('exp-ty')">🖨 Afdrukken / PDF</button></div>
-  </div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="printSec('exp-ty')">🖨 PDF</button></div></div>
   <div id="tab-csv" class="exp-section">
-    <p style="font-size:12px;color:#5f5e5a;margin-bottom:.75rem">Scheidingsteken: puntkomma. Plak in Excel of Google Sheets.</p>
+    <p style="font-size:12px;color:var(--kov-muted);margin-bottom:.75rem">Scheidingsteken: puntkomma. Plak in Excel of Google Sheets.</p>
     <textarea class="csv-out" id="csvContent" readonly></textarea>
     <div class="btn-row">
-      <button onclick="copyCsv()">Kopiëren</button>
-      <button class="primary" onclick="downloadCsv()">↓ Downloaden (.csv)</button>
+      <button class="btn" onclick="copyCsv()">Kopiëren</button>
+      <button class="btn btn-primary" onclick="downloadCsv()">↓ .csv</button>
     </div>
-  </div>
-</div>
-</div>
-
-<!-- Settings Modal -->
-<div id="settingsBg" class="modal-bg" style="display:none">
-<div class="modal" style="width:580px">
-  <button class="close-x" onclick="closeSettings()">×</button>
-  <h2>Instellingen</h2>
-
-  <div style="margin-bottom:1rem">
-    <label style="margin-bottom:6px;display:block">Erasmus+ domein</label>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px" id="st-domainPicker">
-      <label style="display:flex;flex-direction:column;align-items:center;border:0.5px solid #b4b2a9;border-radius:8px;padding:.6rem .5rem;cursor:pointer;font-size:12px;font-weight:400;gap:3px;text-align:center" id="st-lbl-ADU">
-        <input type="radio" name="st-domain" value="ADU" style="width:auto" onchange="stDomainChange()">
-        <span style="font-size:20px">🎓</span>
-        <strong>ADU</strong>
-        <span style="font-size:11px;color:#5f5e5a">Adult Education</span>
-      </label>
-      <label style="display:flex;flex-direction:column;align-items:center;border:0.5px solid #b4b2a9;border-radius:8px;padding:.6rem .5rem;cursor:pointer;font-size:12px;font-weight:400;gap:3px;text-align:center" id="st-lbl-SCH">
-        <input type="radio" name="st-domain" value="SCH" style="width:auto" onchange="stDomainChange()">
-        <span style="font-size:20px">🏫</span>
-        <strong>SCH</strong>
-        <span style="font-size:11px;color:#5f5e5a">School Education</span>
-      </label>
-      <label style="display:flex;flex-direction:column;align-items:center;border:0.5px solid #b4b2a9;border-radius:8px;padding:.6rem .5rem;cursor:pointer;font-size:12px;font-weight:400;gap:3px;text-align:center" id="st-lbl-VET">
-        <input type="radio" name="st-domain" value="VET" style="width:auto" onchange="stDomainChange()">
-        <span style="font-size:20px">🔧</span>
-        <strong>VET</strong>
-        <span style="font-size:11px;color:#5f5e5a">Vocational Education & Training</span>
-      </label>
-    </div>
-  </div>
-
-  <div style="margin-bottom:1rem">
-    <label>Toegekend budget voor dit domein (€)</label>
-    <input type="number" id="st-budget" min="1" step="1000" style="margin-top:3px">
-    <div style="font-size:11px;color:#5f5e5a;margin-top:3px">Vul het volledige toegekende Erasmus+ budget in voor dit domein.</div>
-  </div>
-
-  <div style="margin-bottom:1rem"><label>Projectnaam</label><input id="st-name" style="margin-top:3px"></div>
-
-  <details style="margin-bottom:1rem">
-    <summary style="font-size:13px;cursor:pointer;color:#5f5e5a;user-select:none">JSONBin &amp; beheerderstoegang ▸</summary>
-    <div style="margin-top:.75rem;display:flex;flex-direction:column;gap:.75rem">
-      <div><label>JSONBin Bin ID</label><input id="st-binid" style="margin-top:3px"></div>
-      <div><label>JSONBin API Key</label><input id="st-apikey" type="password" style="margin-top:3px"></div>
-      <div><label>Nieuw beheerderswachtwoord (leeg = ongewijzigd)</label><input id="st-adminpw" type="password" style="margin-top:3px"></div>
-    </div>
-  </details>
-
-  <div class="btn-row">
-    <button onclick="closeSettings()">Annuleren</button>
-    <button class="primary" onclick="settingsSave()">Opslaan</button>
   </div>
 </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════ -->
 <script>
-// ── Constanten ─────────────────────────────────────────────
-const API = 'https://api.jsonbin.io/v3/b/';
-const TOTAL = 360000; // fallback; wordt overschreven door window.BUDGET_TOTAL na login
-function getBudget() { return window.BUDGET_TOTAL || TOTAL; }
-// ── Domeindata ─────────────────────────────────────────────
+// ── CONFIG — vervang deze waarden met je eigen Supabase project ──────────
+const SUPABASE_URL = 'https://fkuhzzcnsjfgqvyupcmi.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrdWh6emNuc2pmZ3F2eXVwY21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzNzA1NzgsImV4cCI6MjA5Nzk0NjU3OH0.MjaXLLmnJNffeHxa_G56tALExXKYshT6gvQcuSUEx8k';
+// ────────────────────────────────────────────────────────────────────────
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ── Domeindata ───────────────────────────────────────────────────────────
 const DOMAIN_DATA = {
   ADU: {
     label: 'Adult Education',
-    clusters: [
+    goalLabel: 'Clusters',
+    goals: [
       "Brede cursistenbegeleiding en inclusieve didactiek",
       "Arbeidsmarktgericht en geïntegreerd curriculum",
       "AI, evaluatie en digitale transformatie",
@@ -339,30 +420,25 @@ const DOMAIN_DATA = {
   },
   SCH: {
     label: 'School Education',
-    clusters: [
-      "Taalonderwijs en meertaligheid",
-      "Digitalisering en mediawijsheid",
-      "Inclusief onderwijs en diversiteit",
-      "STEM en innovatieve didactiek",
-      "Schoolleiderschap en professionalisering",
-      "Duurzaamheid en burgerschapsvorming"
+    goalLabel: 'Erasmusplandoelstellingen',
+    goals: [
+      "Kennisrijk curriculum",
+      "Scholen voor iedereen",
+      "AI-geletterdheid"
     ]
   },
   VET: {
     label: 'Vocational Education & Training',
-    clusters: [
-      "Arbeidsmarktrelevantie en sectorpartnerships",
-      "Digitale en groene vaardigheden",
-      "WBL en duale leertrajecten",
-      "Inclusie en kwetsbare doelgroepen",
-      "Kwaliteitszorg en EQF-afstemming",
-      "Internationalisering en Europese samenwerking"
+    goalLabel: 'Erasmusplandoelstellingen',
+    goals: [
+      "Curriculuminnovatie",
+      "Digitalisering",
+      "Wereldburgerschap"
     ]
   }
 };
 
-// Actieve clusters (worden ingesteld bij startApp)
-let CLUSTERS = DOMAIN_DATA.ADU.clusters;
+// ── Erasmus+ constanten ──────────────────────────────────────────────────
 const COUNTRY_GROUP = {
   "België":1,"Bulgarije":3,"Cyprus":2,"Denemarken":1,"Duitsland":1,"Estland":2,
   "Finland":1,"Frankrijk":1,"Griekenland":2,"Hongarije":3,"Ierland":1,"IJsland":1,
@@ -386,545 +462,382 @@ const MONTHS = [
 ];
 const MNL = ["","jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
 
-// ── State ──────────────────────────────────────────────────
+// ── State ────────────────────────────────────────────────────────────────
+let currentUser = null;
+let currentDomain = 'ADU';
 let mobilities = [];
+let budgets = { ADU: 360000, SCH: 0, VET: 0 };
 let editId = null;
-let cfg = {};
 
-// ── Config ─────────────────────────────────────────────────
-function loadCfg() { try { cfg = JSON.parse(localStorage.getItem('ka1_cfg') || '{}'); } catch(e) { cfg = {}; } }
-function saveCfg() { localStorage.setItem('ka1_cfg', JSON.stringify(cfg)); }
+// ── Auth ─────────────────────────────────────────────────────────────────
+sb.auth.onAuthStateChange(async (event, session) => {
+  if (session?.user) {
+    currentUser = session.user;
+    document.getElementById('authScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    document.getElementById('headerEmail').textContent = currentUser.email;
+    await loadBudgets();
+    initApp();
+  } else {
+    currentUser = null;
+    document.getElementById('authScreen').style.display = 'flex';
+    document.getElementById('mainApp').style.display = 'none';
+  }
+});
 
-loadCfg();
-if (!cfg.binId || !cfg.apiKey) {
-  document.getElementById('setupScreen').style.display = 'block';
-} else {
-  startApp();
+function switchAuth(tab) {
+  document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+  document.querySelectorAll('.auth-tab').forEach((b,i) => b.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register')));
 }
 
-function domainChange() {
-  const val = document.querySelector('input[name="domain"]:checked')?.value;
-  ['ADU','SCH','VET'].forEach(d => {
-    const lbl = document.getElementById('lbl-' + d);
-    if (lbl) lbl.style.borderColor = d === val ? '#378ADD' : '#b4b2a9';
-    if (lbl) lbl.style.background  = d === val ? '#EBF4FC' : '';
-  });
-}
-// Initialiseer visuele staat bij laden
-document.addEventListener('DOMContentLoaded', domainChange);
-
-function setupSave() {
-  const binId = document.getElementById('s-binid').value.trim();
-  const apiKey = document.getElementById('s-apikey').value.trim();
-  const adminPw = document.getElementById('s-adminpw').value.trim();
-  const name = document.getElementById('s-name').value.trim();
-  const domain = document.getElementById('s-domain').value;
-  const budget = parseInt(document.getElementById('s-budget').value) || 360000;
-  if (!binId || !apiKey || !adminPw) { alert('Vul Bin ID, API key en beheerderswachtwoord in.'); return; }
-  cfg = { binId, apiKey, adminPwHash: simpleHash(adminPw), name, domain, budget };
-  saveCfg();
-  document.getElementById('setupScreen').style.display = 'none';
-  startApp();
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pw = document.getElementById('login-pw').value;
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Aanmelden…';
+  const { error } = await sb.auth.signInWithPassword({ email, password: pw });
+  if (error) { document.getElementById('login-err').textContent = error.message; }
+  btn.disabled = false; btn.textContent = 'Aanmelden';
 }
 
-function startApp() {
-  const domain = cfg.domain || 'ADU';
-  const domainInfo = DOMAIN_DATA[domain] || DOMAIN_DATA.ADU;
-  CLUSTERS = domainInfo.clusters;
-  window.BUDGET_TOTAL = cfg.budget || 360000;
+async function doRegister() {
+  const email = document.getElementById('reg-email').value.trim();
+  const pw = document.getElementById('reg-pw').value;
+  const btn = document.getElementById('regBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Registreren…';
+  const { error } = await sb.auth.signUp({ email, password: pw });
+  if (error) { document.getElementById('reg-err').textContent = error.message; }
+  else { document.getElementById('reg-err').style.color='var(--kov-success)'; document.getElementById('reg-err').textContent = 'Account aangemaakt — check je e-mail om te bevestigen.'; }
+  btn.disabled = false; btn.textContent = 'Account aanmaken';
+}
 
-  const title = cfg.name ? cfg.name : `KA1 ${domain} — Mobility Planner 2026–2027`;
-  document.getElementById('appTitle').textContent = title;
-  document.getElementById('appSubtitle').textContent =
-    `Katholiek Onderwijs Vlaanderen · KA121 ${domainInfo.label} · Budget: €${(cfg.budget || 360000).toLocaleString('nl-BE')}`;
+async function doLogout() {
+  await sb.auth.signOut();
+}
 
-  document.getElementById('app').style.display = 'block';
+// ── Budget opslaan/laden (in Supabase tabel 'budgets') ───────────────────
+async function loadBudgets() {
+  const { data } = await sb.from('budgets').select('*').eq('user_id', currentUser.id);
+  if (data) data.forEach(r => { budgets[r.domain] = r.amount; });
+}
 
-  // Herinitialiseer landen, clusters en mgmt (bij domeinwissel)
+async function saveBudgetToDB(domain, amount) {
+  await sb.from('budgets').upsert({ user_id: currentUser.id, domain, amount }, { onConflict: 'user_id,domain' });
+}
+
+// ── Domain switch ────────────────────────────────────────────────────────
+function switchDomain(domain) {
+  currentDomain = domain;
+  ['ADU','SCH','VET'].forEach(d => document.getElementById('tab-'+d).classList.toggle('active', d === domain));
+  initApp();
+}
+
+function initApp() {
+  const dd = DOMAIN_DATA[currentDomain];
+  const budget = budgets[currentDomain] || 0;
+  document.getElementById('domainTitle').textContent = `${currentDomain} — ${dd.label}`;
+  document.getElementById('domainSub').textContent = `KA121 · Budget: €${budget.toLocaleString('nl-BE')}`;
   initCountries();
-  initClusters();
-  updateMgmt();
-  loadData();
+  initGoalChecks();
+  initFilterGoal();
+  clearFilters();
+  loadMobilities();
 }
 
-// ── JSONBin ────────────────────────────────────────────────
-
-async function loadData() {
+// ── Data laden ───────────────────────────────────────────────────────────
+async function loadMobilities() {
   const btn = document.getElementById('refreshBtn');
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Laden…';
-  // Toon laadindicator in kalender en lijst
-  document.getElementById('calWrap').innerHTML = '<p style="font-size:13px;color:#5f5e5a;padding:.5rem 0">Data laden…</p>';
-  document.getElementById('mobList').innerHTML = '';
-  try {
-    const r = await fetch(API + cfg.binId + '/latest', { headers: { 'X-Master-Key': cfg.apiKey } });
-    if (!r.ok) throw new Error('HTTP ' + r.status + ' — controleer je Bin ID en API key via ⚙ Instellingen');
-    const data = await r.json();
-    mobilities = data.record.mobilities || [];
+  btn.disabled = true; btn.innerHTML = '<span class="spinner" style="border-top-color:var(--kov-text)"></span>Laden…';
+  document.getElementById('calWrap').innerHTML = '<p class="empty-state">Data laden…</p>';
+  const { data, error } = await sb.from('mobilities').select('*')
+    .eq('user_id', currentUser.id).eq('domain', currentDomain).order('start_date');
+  if (error) {
+    toast('Laden mislukt: ' + error.message, true);
+    document.getElementById('calWrap').innerHTML = `<div style="background:#FCEBEB;border:0.5px solid #E8AEAE;border-radius:8px;padding:1rem;font-size:13px;color:var(--kov-danger)"><strong>Kan data niet laden.</strong><br>${error.message}</div>`;
+  } else {
+    mobilities = data || [];
     render();
-    if (mobilities.length === 0) {
-      toast('Verbonden — nog geen mobilities ingegeven');
-    } else {
-      toast(mobilities.length + ' mobiliteit' + (mobilities.length !== 1 ? 'en' : '') + ' geladen');
-    }
-  } catch(e) {
-    document.getElementById('calWrap').innerHTML =
-      `<div style="background:#FCEBEB;border:0.5px solid #E8AEAE;border-radius:8px;padding:1rem;font-size:13px;color:#A32D2D;margin-bottom:1rem">
-        <strong>Kan data niet laden.</strong><br>${e.message}<br><br>
-        Klik op <strong>⚙ Instellingen</strong> en controleer je Bin ID en API key.
-      </div>`;
-    toast('Laden mislukt', true);
+    toast(mobilities.length + ' mobiliteit' + (mobilities.length !== 1 ? 'en' : '') + ' geladen');
   }
   btn.disabled = false; btn.textContent = '↻ Vernieuwen';
 }
 
-async function pushData() {
-  const r = await fetch(API + cfg.binId, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', 'X-Master-Key': cfg.apiKey },
-    body: JSON.stringify({ mobilities })
-  });
-  if (!r.ok) throw new Error(r.status);
+// ── Budget modal ─────────────────────────────────────────────────────────
+function openBudgetModal() {
+  document.getElementById('budgetDomainLabel').textContent = currentDomain;
+  document.getElementById('budgetInput').value = budgets[currentDomain] || '';
+  document.getElementById('budgetModalBg').style.display = 'flex';
+}
+function closeBudgetModal() { document.getElementById('budgetModalBg').style.display = 'none'; }
+async function saveBudget() {
+  const amount = parseInt(document.getElementById('budgetInput').value) || 0;
+  budgets[currentDomain] = amount;
+  await saveBudgetToDB(currentDomain, amount);
+  document.getElementById('domainSub').textContent = `KA121 · Budget: €${amount.toLocaleString('nl-BE')}`;
+  closeBudgetModal();
+  render();
+  toast('Budget opgeslagen');
 }
 
-// ── Budgetberekening ───────────────────────────────────────
-function countDays(start, end) {
-  return Math.max(1, Math.round((new Date(end) - new Date(start)) / 86400000) + 1);
-}
+// ── Budgetberekening ─────────────────────────────────────────────────────
+function countDays(s, e) { return Math.max(1, Math.round((new Date(e) - new Date(s)) / 86400000) + 1); }
 
 function calcBudget(mob) {
-  const d = countDays(mob.start, mob.end);
+  const d = countDays(mob.start_date, mob.end_date);
   const grp = COUNTRY_GROUP[mob.country] || 2;
   const p = mob.participants;
   const indSupp = IND[grp] * d * p;
   const mgmt = MGMT[mob.type] * p;
-  const courseDays = Math.max(0, d - 2);   // eerste en laatste dag zijn reisdagen
+  const courseDays = Math.max(0, d - 2);
   const courseFee = (mob.type === 'course' || mob.type === 'expert') ? 80 * courseDays * p : 0;
   const trav = (TRAVEL[mob.dist] || TRAVEL[500])[mob.travel] * p;
-  const total = indSupp + mgmt + courseFee + trav;
-  return { indSupp, mgmt, courseFee, trav, total, days: d, courseDays };
+  return { indSupp, mgmt, courseFee, trav, total: indSupp + mgmt + courseFee + trav, days: d, courseDays };
 }
 
-// ── Preview in formulier ───────────────────────────────────
+function fmt(n) { return Math.round(n).toLocaleString('nl-BE'); }
+
+// ── Preview ───────────────────────────────────────────────────────────────
 function updatePreview() {
-  const start   = document.getElementById('f-start').value;
-  const end     = document.getElementById('f-end').value;
-  const country = document.getElementById('f-country').value;
-  const el      = document.getElementById('budgetPreview');
-  if (!start || !end || !country) {
-    el.innerHTML = '<strong>Geschat budget</strong>: vul formulier in';
-    return;
-  }
+  const s = document.getElementById('f-start').value, e = document.getElementById('f-end').value;
+  const c = document.getElementById('f-country').value;
+  const el = document.getElementById('budgetPreview');
+  if (!s || !e || !c) { el.innerHTML = '<strong>Geschat budget</strong>: vul formulier in'; return; }
   const mob = {
-    start, end, country,
-    type:         document.getElementById('f-type').value,
-    dist:         parseInt(document.getElementById('f-dist').value),
-    travel:       document.getElementById('f-travel').value,
+    start_date: s, end_date: e, country: c,
+    type: document.getElementById('f-type').value,
+    dist: parseInt(document.getElementById('f-dist').value),
+    travel: document.getElementById('f-travel').value,
     participants: parseInt(document.getElementById('f-participants').value) || 1
   };
   const b = calcBudget(mob);
-  const grp = COUNTRY_GROUP[country] || 2;
-  el.innerHTML =
-    `<strong>Geschat budget: €${fmt(b.total)}</strong><br>
-     <span style="color:#5f5e5a">
-       Ind. steun: €${fmt(b.indSupp)} (${b.days} dag${b.days > 1 ? 'en' : ''} × €${IND[grp]} × ${mob.participants} deeln.)
-       &nbsp;|&nbsp; Mgmt fee: €${fmt(b.mgmt)}
-       &nbsp;|&nbsp; Reissteun: €${fmt(b.trav)}
-       ${b.courseFee ? `&nbsp;|&nbsp; Cursusbijdr.: €${fmt(b.courseFee)} (${b.courseDays} cursusdag${b.courseDays !== 1 ? 'en' : ''}, excl. 2 reisdagen)` : ''}
-     </span>`;
+  el.innerHTML = `<strong>Geschat budget: €${fmt(b.total)}</strong><br>
+    <span style="color:var(--kov-muted)">Ind. steun: €${fmt(b.indSupp)} (${b.days} dag${b.days>1?'en':''} × €${IND[COUNTRY_GROUP[c]||2]} × ${mob.participants} deeln.)
+    &nbsp;|&nbsp; Mgmt fee: €${fmt(b.mgmt)} &nbsp;|&nbsp; Reissteun: €${fmt(b.trav)}
+    ${b.courseFee ? `&nbsp;|&nbsp; Cursusbijdr.: €${fmt(b.courseFee)} (${b.courseDays} cursusdag${b.courseDays!==1?'en':''})` : ''}</span>`;
 }
-
 function updateMgmt() {
-  const type = document.getElementById('f-type').value;
-  document.getElementById('f-mgmt').value = '€' + MGMT[type] + ' per deelnemer';
+  document.getElementById('f-mgmt').value = '€' + MGMT[document.getElementById('f-type').value] + ' per deelnemer';
   updatePreview();
 }
 
-// ── Modaal: toevoegen / bewerken ───────────────────────────
+// ── Modal open/close ──────────────────────────────────────────────────────
 function openAdd() {
   editId = null;
-  document.getElementById('modalTitle').textContent = 'Mobiliteit toevoegen';
+  document.getElementById('mobModalTitle').textContent = 'Mobiliteit toevoegen';
   document.getElementById('deleteBtn').style.display = 'none';
   ['f-title','f-city','f-notes'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('f-type').value = 'course';
-  document.getElementById('f-start').value = '';
-  document.getElementById('f-end').value = '';
-  document.getElementById('f-country').value = '';
-  document.getElementById('f-dist').value = '500';
-  document.getElementById('f-travel').value = 'standard';
-  document.getElementById('f-participants').value = '1';
-  document.querySelectorAll('#clusterChecks input').forEach(c => c.checked = false);
+  document.getElementById('f-start').value = ''; document.getElementById('f-end').value = '';
+  document.getElementById('f-country').value = ''; document.getElementById('f-dist').value = '500';
+  document.getElementById('f-travel').value = 'standard'; document.getElementById('f-participants').value = '1';
+  document.querySelectorAll('#goalChecks input').forEach(c => c.checked = false);
   document.getElementById('budgetPreview').innerHTML = '<strong>Geschat budget</strong>: vul formulier in';
   updateMgmt();
-  document.getElementById('modalBg').style.display = 'flex';
+  document.getElementById('mobModalBg').style.display = 'flex';
 }
 
 function openEdit(id) {
   const mob = mobilities.find(x => x.id === id); if (!mob) return;
   editId = id;
-  document.getElementById('modalTitle').textContent = 'Mobiliteit bewerken';
+  document.getElementById('mobModalTitle').textContent = 'Mobiliteit bewerken';
   document.getElementById('deleteBtn').style.display = 'inline-block';
   document.getElementById('f-title').value = mob.title;
   document.getElementById('f-type').value = mob.type;
-  document.getElementById('f-start').value = mob.start;
-  document.getElementById('f-end').value = mob.end;
+  document.getElementById('f-start').value = mob.start_date;
+  document.getElementById('f-end').value = mob.end_date;
   document.getElementById('f-country').value = mob.country;
   document.getElementById('f-city').value = mob.city || '';
   document.getElementById('f-dist').value = mob.dist;
   document.getElementById('f-travel').value = mob.travel;
   document.getElementById('f-participants').value = mob.participants;
   document.getElementById('f-notes').value = mob.notes || '';
-  document.querySelectorAll('#clusterChecks input').forEach(c => c.checked = mob.clusters.includes(c.value));
+  const goals = mob.goals || [];
+  document.querySelectorAll('#goalChecks input').forEach(c => c.checked = goals.includes(c.value));
   updateMgmt();
-  document.getElementById('modalBg').style.display = 'flex';
+  document.getElementById('mobModalBg').style.display = 'flex';
 }
+function closeModal() { document.getElementById('mobModalBg').style.display = 'none'; }
 
-function closeModal() { document.getElementById('modalBg').style.display = 'none'; }
-
+// ── CRUD ──────────────────────────────────────────────────────────────────
 async function saveEntry() {
-  const title   = document.getElementById('f-title').value.trim();
-  const start   = document.getElementById('f-start').value;
-  const end     = document.getElementById('f-end').value;
+  const title = document.getElementById('f-title').value.trim();
+  const start = document.getElementById('f-start').value;
+  const end = document.getElementById('f-end').value;
   const country = document.getElementById('f-country').value;
   if (!title || !start || !end || !country) { alert('Vul minstens titel, data en land in.'); return; }
-  const clusters = [...document.querySelectorAll('#clusterChecks input:checked')].map(c => c.value);
-  const mob = {
-    id: editId || Date.now().toString(),
+  const goals = [...document.querySelectorAll('#goalChecks input:checked')].map(c => c.value);
+  const record = {
+    user_id: currentUser.id, domain: currentDomain,
     title, type: document.getElementById('f-type').value,
-    start, end, country,
-    city:         document.getElementById('f-city').value,
-    dist:         parseInt(document.getElementById('f-dist').value),
-    travel:       document.getElementById('f-travel').value,
+    start_date: start, end_date: end, country,
+    city: document.getElementById('f-city').value,
+    dist: parseInt(document.getElementById('f-dist').value),
+    travel: document.getElementById('f-travel').value,
     participants: parseInt(document.getElementById('f-participants').value) || 1,
-    notes:        document.getElementById('f-notes').value,
-    clusters
+    notes: document.getElementById('f-notes').value,
+    goals
   };
   const btn = document.getElementById('saveBtn');
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Opslaan…';
-  try {
-    mobilities = editId ? mobilities.map(x => x.id === editId ? mob : x) : [...mobilities, mob];
-    await pushData();
-    closeModal(); render(); toast('Opgeslagen');
-  } catch(e) { toast('Opslaan mislukt: ' + e.message, true); }
+  let error;
+  if (editId) {
+    ({ error } = await sb.from('mobilities').update(record).eq('id', editId));
+  } else {
+    ({ error } = await sb.from('mobilities').insert(record));
+  }
+  if (error) { toast('Opslaan mislukt: ' + error.message, true); }
+  else { closeModal(); await loadMobilities(); toast('Opgeslagen'); }
   btn.disabled = false; btn.textContent = 'Opslaan';
 }
 
 async function deleteEntry() {
-  const pw = prompt('Voer het beheerderswachtwoord in:');
-  if (!pw) return;
-  if (simpleHash(pw) !== cfg.adminPwHash) { alert('Onjuist wachtwoord.'); return; }
   if (!confirm('Verwijder deze mobiliteit?')) return;
-  try {
-    mobilities = mobilities.filter(x => x.id !== editId);
-    await pushData(); closeModal(); render(); toast('Verwijderd');
-  } catch(e) { toast('Verwijderen mislukt: ' + e.message, true); }
+  const { error } = await sb.from('mobilities').delete().eq('id', editId);
+  if (error) { toast('Verwijderen mislukt: ' + error.message, true); }
+  else { closeModal(); await loadMobilities(); toast('Verwijderd'); }
 }
 
-// ── Render ─────────────────────────────────────────────────
-function fmt(n) { return Math.round(n).toLocaleString('nl-BE'); }
-
+// ── Filter ────────────────────────────────────────────────────────────────
 function activeFilters() {
   return {
-    cluster: document.getElementById('filter-cluster')?.value || '',
-    type:    document.getElementById('filter-type')?.value || ''
+    goal: document.getElementById('filter-goal')?.value || '',
+    type: document.getElementById('filter-type')?.value || ''
   };
 }
-
 function filteredMobs() {
-  const { cluster, type } = activeFilters();
+  const { goal, type } = activeFilters();
   return mobilities.filter(m =>
-    (!cluster || m.clusters.includes(cluster)) &&
-    (!type    || m.type === type)
+    (!goal || (m.goals || []).includes(goal)) &&
+    (!type || m.type === type)
   );
 }
-
+function applyFilter() { render(); }
 function clearFilters() {
-  document.getElementById('filter-cluster').value = '';
-  document.getElementById('filter-type').value = '';
+  const fg = document.getElementById('filter-goal'); if (fg) fg.value = '';
+  const ft = document.getElementById('filter-type'); if (ft) ft.value = '';
   render();
 }
 
-function initFilterCluster() {
-  const sel = document.getElementById('filter-cluster');
-  if (!sel || sel.options.length > 1) return;
-  CLUSTERS.forEach((c, i) => {
-    const o = document.createElement('option');
-    o.value = c; o.textContent = (i + 1) + '. ' + c;
-    sel.appendChild(o);
-  });
-}
-
+// ── Render ────────────────────────────────────────────────────────────────
 function render() {
-  const { cluster, type } = activeFilters();
+  const { goal, type } = activeFilters();
+  const isFiltered = goal || type;
   const filtered = filteredMobs();
-  const isFiltered = cluster || type;
+  const T = budgets[currentDomain] || 0;
+  const used = mobilities.reduce((s, m) => s + calcBudget(m).total, 0);
+  const filtUsed = filtered.reduce((s, m) => s + calcBudget(m).total, 0);
+  const pctTotal = T > 0 ? Math.min(100, (used / T) * 100) : 0;
+  const pctFilt  = T > 0 ? Math.min(100, (filtUsed / T) * 100) : 0;
 
-  // Toon/verberg filterknop
-  const clearBtn = document.getElementById('clearFilter');
-  if (clearBtn) clearBtn.style.display = isFiltered ? 'inline-block' : 'none';
-
-  // Filterinfo
-  const info = document.getElementById('filterInfo');
-  if (info) {
-    if (!isFiltered) { info.textContent = ''; }
+  // Filterknop
+  const cb = document.getElementById('clearFilterBtn');
+  if (cb) cb.style.display = isFiltered ? 'inline-block' : 'none';
+  const fi = document.getElementById('filterInfo');
+  if (fi) {
+    if (!isFiltered) { fi.textContent = ''; }
     else {
       const parts = [];
-      if (cluster) parts.push('cluster: ' + (CLUSTERS.indexOf(cluster) + 1) + '. ' + cluster);
+      if (goal) parts.push('doelstelling: ' + goal);
       if (type) parts.push('type: ' + TYPE_LABEL[type]);
-      info.textContent = `${filtered.length} mobiliteit${filtered.length !== 1 ? 'en' : ''} gevonden — filter op ${parts.join(', ')}`;
+      fi.textContent = `${filtered.length} mobiliteit${filtered.length!==1?'en':''} gevonden — filter op ${parts.join(', ')}`;
     }
   }
 
-  const used = mobilities.reduce((s, m) => s + calcBudget(m).total, 0);
-  const filtUsed = filtered.reduce((s, m) => s + calcBudget(m).total, 0);
-  const T = getBudget();
-  const pctTotal = Math.min(100, (used / T) * 100);
-  const pctFilt  = Math.min(100, (filtUsed / T) * 100);
-
-  // Budgetbalk: toon gefilterd aandeel (blauw) bovenop totaal (grijs)
+  // Budgetbalk
+  const bar = document.getElementById('budgetBar');
+  bar.style.width = pctTotal + '%';
   if (isFiltered) {
-    document.getElementById('budgetBar').style.width = pctTotal + '%';
-    document.getElementById('budgetBar').style.background =
-      `linear-gradient(to right, #378ADD ${pctFilt / pctTotal * 100}%, #b0c8e8 ${pctFilt / pctTotal * 100}%)`;
+    bar.style.background = `linear-gradient(to right, var(--kov-oranje) ${pctFilt/Math.max(pctTotal,0.01)*100}%, #b0c8e8 ${pctFilt/Math.max(pctTotal,0.01)*100}%)`;
   } else {
-    document.getElementById('budgetBar').style.width = pctTotal + '%';
-    document.getElementById('budgetBar').style.background =
-      pctTotal > 90 ? '#E24B4A' : pctTotal > 75 ? '#EF9F27' : '#378ADD';
+    bar.style.background = pctTotal > 90 ? '#C0392B' : pctTotal > 75 ? '#E67E22' : 'var(--kov-paars)';
   }
 
+  // Metrics
   document.getElementById('metrics').innerHTML = `
-    <div class="metric"><div class="metric-label">Totaal budget</div><div class="metric-value">€${fmt(T)}</div></div>
-    <div class="metric"><div class="metric-label">Gebruikt${isFiltered ? ' (totaal)' : ''}</div><div class="metric-value ${pctTotal > 90 ? 'danger' : ''}">€${fmt(used)}</div></div>
-    <div class="metric"><div class="metric-label">Resterend</div><div class="metric-value ${(T - used) < 0 ? 'danger' : 'success'}">€${fmt(T - used)}</div></div>
+    <div class="metric"><div class="metric-label">Totaal budget</div><div class="metric-value">${T > 0 ? '€' + fmt(T) : '<span style="font-size:14px;color:var(--kov-muted)">Niet ingesteld</span>'}</div></div>
+    <div class="metric"><div class="metric-label">Gebruikt${isFiltered?' (totaal)':''}</div><div class="metric-value ${pctTotal>90?'danger':''}">€${fmt(used)}</div></div>
+    <div class="metric"><div class="metric-label">Resterend</div><div class="metric-value ${T>0&&(T-used)<0?'danger':'success'}">€${fmt(T - used)}</div></div>
     ${isFiltered ? `
-    <div class="metric" style="border:0.5px solid #378ADD">
-      <div class="metric-label" style="color:#185FA5">Gebruikt (filter)</div>
-      <div class="metric-value" style="color:#185FA5">€${fmt(filtUsed)}</div>
-    </div>
-    <div class="metric" style="border:0.5px solid #378ADD">
-      <div class="metric-label" style="color:#185FA5">% van totaal (filter)</div>
-      <div class="metric-value" style="color:#185FA5">${pctFilt.toFixed(1)}%</div>
-    </div>
-    <div class="metric" style="border:0.5px solid #378ADD">
-      <div class="metric-label" style="color:#185FA5">% van gebruikt (filter)</div>
-      <div class="metric-value" style="color:#185FA5">${used > 0 ? ((filtUsed / used) * 100).toFixed(1) : '0.0'}%</div>
-    </div>` : `
+    <div class="metric accent"><div class="metric-label">Gebruikt (filter)</div><div class="metric-value">€${fmt(filtUsed)}</div></div>
+    <div class="metric accent"><div class="metric-label">% v. totaal (filter)</div><div class="metric-value">${pctFilt.toFixed(1)}%</div></div>
+    <div class="metric accent"><div class="metric-label">% v. gebruikt (filter)</div><div class="metric-value">${used>0?((filtUsed/used)*100).toFixed(1):'0.0'}%</div></div>` : `
     <div class="metric"><div class="metric-label">Mobilities</div><div class="metric-value">${mobilities.length}</div></div>
     <div class="metric"><div class="metric-label">Budget gebruikt</div><div class="metric-value">${pctTotal.toFixed(1)}%</div></div>`}`;
-  renderCal(filtered); renderList(filtered);
+
+  renderCal(filtered);
+  renderList(filtered);
 }
 
-// ── Kalender met weken ─────────────────────────────────────
+// ── Kalender ──────────────────────────────────────────────────────────────
 function weeksForMonth(y, m) {
-  const first = new Date(y, m - 1, 1), last = new Date(y, m, 0);
-  const dow = first.getDay(), diff = dow === 0 ? -6 : 1 - dow;
+  const first = new Date(y, m-1, 1), last = new Date(y, m, 0);
+  const diff = first.getDay() === 0 ? -6 : 1 - first.getDay();
   let ws = new Date(first); ws.setDate(first.getDate() + diff);
   const weeks = [];
-  while (ws <= last) {
-    const we = new Date(ws); we.setDate(ws.getDate() + 6);
-    weeks.push({ start: new Date(ws), end: new Date(we) });
-    ws.setDate(ws.getDate() + 7);
-  }
+  while (ws <= last) { const we = new Date(ws); we.setDate(ws.getDate()+6); weeks.push({start:new Date(ws),end:new Date(we)}); ws.setDate(ws.getDate()+7); }
   return weeks;
 }
-
 function weekLabel(wS, wE, y, m) {
-  const mS = new Date(y, m - 1, 1), mE = new Date(y, m, 0);
+  const mS = new Date(y,m-1,1), mE = new Date(y,m,0);
   const ds = wS < mS ? mS : wS, de = wE > mE ? mE : wE;
   return `${ds.getDate()}–${de.getDate()} ${MNL[m]}`;
 }
-
-function mobsInRange(s, e) {
-  return mobilities.filter(mob => new Date(mob.start) <= e && new Date(mob.end) >= s);
-}
-
 function prorata(mob, s, e) {
   const b = calcBudget(mob);
-  const s2 = new Date(mob.start) > s ? new Date(mob.start) : s;
-  const e2 = new Date(mob.end) < e ? new Date(mob.end) : e;
-  const ov = Math.max(0, Math.round((e2 - s2) / 86400000) + 1);
+  const s2 = new Date(mob.start_date) > s ? new Date(mob.start_date) : s;
+  const e2 = new Date(mob.end_date) < e ? new Date(mob.end_date) : e;
+  const ov = Math.max(0, Math.round((e2-s2)/86400000)+1);
   return (ov / b.days) * b.total;
+}
+function mobsInRange(subset, s, e) {
+  return subset.filter(mob => new Date(mob.start_date) <= e && new Date(mob.end_date) >= s);
 }
 
 function renderCal(subset) {
-  const mobs = subset || mobilities;
-  let html = '';
-  let anyContent = false;
+  let html = ''; let anyContent = false;
   MONTHS.forEach(({y, m}) => {
-    const weeks = weeksForMonth(y, m);
-    const mS = new Date(y, m - 1, 1), mE = new Date(y, m, 0);
-    const monthMobs = mobs.filter(mob => new Date(mob.start) <= mE && new Date(mob.end) >= mS);
-    const monthBud = monthMobs.reduce((s, mob) => s + prorata(mob, mS, mE), 0);
-    if (subset && monthMobs.length === 0) return; // verberg lege maanden bij filter
+    const mS = new Date(y,m-1,1), mE = new Date(y,m,0);
+    const monthMobs = mobsInRange(subset, mS, mE);
+    const isFiltered = !!(activeFilters().goal || activeFilters().type);
+    if (isFiltered && monthMobs.length === 0) return;
     anyContent = true;
-
-    html += `<table class="cal">
-      <thead><tr>
-        <th style="width:64px">${MNL[m]} ${y}</th>
-        <th style="width:88px">Week</th>
-        <th>Mobilities</th>
-        <th style="width:80px;text-align:right">Budget</th>
-      </tr></thead><tbody>`;
-
-    weeks.forEach(({start: wS, end: wE}) => {
-      const wMobs = mobs.filter(mob => new Date(mob.start) <= wE && new Date(mob.end) >= wS
-        && new Date(mob.start) <= mE && new Date(mob.end) >= mS);
-      if (subset && wMobs.length === 0) return;
+    const monthBud = monthMobs.reduce((s, mob) => s + prorata(mob, mS, mE), 0);
+    const weeks = weeksForMonth(y, m);
+    html += `<table class="cal"><thead><tr><th style="width:64px">${MNL[m]} ${y}</th><th style="width:92px">Week</th><th>Mobilities</th><th style="width:82px;text-align:right">Budget</th></tr></thead><tbody>`;
+    weeks.forEach(({start:wS, end:wE}) => {
+      const wMobs = mobsInRange(subset, wS, wE).filter(mob => new Date(mob.start_date) <= mE && new Date(mob.end_date) >= mS);
+      if (isFiltered && wMobs.length === 0) return;
       const wBud = wMobs.reduce((s, mob) => s + prorata(mob, wS, wE), 0);
-      const chips = wMobs.map(mob =>
-        `<span class="mob-chip ${TYPE_COLOR[mob.type]}" onclick="openEdit('${mob.id}')" title="${mob.title}">${mob.title}</span>`
-      ).join('');
-      html += `<tr>
-        <td style="background:#f0efe8"></td>
-        <td style="font-size:11px;color:#5f5e5a;white-space:nowrap">${weekLabel(wS, wE, y, m)}</td>
-        <td style="padding:3px 4px;vertical-align:top">${chips || '<span style="color:#ccc;font-size:10px">—</span>'}</td>
-        <td style="text-align:right;font-size:11px;color:#5f5e5a">${wBud > 0 ? '€' + fmt(wBud) : ''}</td>
-      </tr>`;
+      const chips = wMobs.map(mob => `<span class="mob-chip ${TYPE_COLOR[mob.type]}" onclick="openEdit('${mob.id}')" title="${mob.title}">${mob.title}</span>`).join('');
+      html += `<tr><td style="background:#F0EFE8"></td><td style="font-size:11px;color:var(--kov-muted);white-space:nowrap">${weekLabel(wS,wE,y,m)}</td><td style="padding:3px 4px;vertical-align:top">${chips||'<span style="color:#ccc;font-size:10px">—</span>'}</td><td style="text-align:right;font-size:11px;color:var(--kov-muted)">${wBud>0?'€'+fmt(wBud):''}</td></tr>`;
     });
-
-    html += `</tbody><tfoot><tr>
-      <td colspan="3">Maandtotaal</td>
-      <td style="text-align:right">€${fmt(monthBud)}</td>
-    </tr></tfoot></table>`;
+    html += `</tbody><tfoot><tr><td colspan="3">Maandtotaal</td><td style="text-align:right">€${fmt(monthBud)}</td></tr></tfoot></table>`;
   });
-  if (!anyContent) html = '<p style="font-size:13px;color:#5f5e5a;padding:.5rem 0">Geen mobilities gevonden voor deze filter.</p>';
+  if (!anyContent) html = '<p class="empty-state">Geen mobilities gevonden voor deze filter.</p>';
   document.getElementById('calWrap').innerHTML = html;
 }
 
 function renderList(subset) {
-  const mobs = subset || mobilities;
-  if (!mobs.length) {
-    document.getElementById('mobList').innerHTML = '<p style="font-size:13px;color:#5f5e5a">Geen mobilities gevonden.</p>';
-    return;
-  }
-  const sorted = [...mobs].sort((a, b) => a.start.localeCompare(b.start));
+  if (!subset.length) { document.getElementById('mobList').innerHTML = '<p class="empty-state">Geen mobilities gevonden.</p>'; return; }
+  const sorted = [...subset].sort((a,b) => a.start_date.localeCompare(b.start_date));
+  const dd = DOMAIN_DATA[currentDomain];
   document.getElementById('mobList').innerHTML = sorted.map(mob => {
     const b = calcBudget(mob);
-    const cls = mob.clusters.map(c => {
-      const i = CLUSTERS.indexOf(c);
-      return i >= 0 ? `<span class="cluster-tag">${i + 1}. ${c}</span>` : null;
-    }).filter(Boolean).join('');
-    return `<div class="card" onclick="openEdit('${mob.id}')">
+    const goalTags = (mob.goals||[]).map(g => { const i = dd.goals.indexOf(g); return i>=0?`<span class="cluster-tag">${i+1}. ${g}</span>`:null; }).filter(Boolean).join('');
+    return `<div class="mob-card" onclick="openEdit('${mob.id}')">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
         <span class="mob-chip ${TYPE_COLOR[mob.type]}" style="display:inline-block">${TYPE_LABEL[mob.type]}</span>
         <strong style="font-size:14px">${mob.title}</strong>
-        <span style="margin-left:auto;font-size:14px;font-weight:500">€${fmt(b.total)}</span>
+        <span style="margin-left:auto;font-size:14px;font-weight:600">€${fmt(b.total)}</span>
       </div>
-      <div style="font-size:12px;color:#5f5e5a">${mob.start} → ${mob.end} | ${mob.country}${mob.city ? ' (' + mob.city + ')' : ''} | ${mob.participants} deeln. | ${b.days} dagen${b.courseDays < b.days ? ' (' + b.courseDays + ' cursusdagen)' : ''}</div>
-      <div class="cluster-tags">${cls}</div>
+      <div style="font-size:12px;color:var(--kov-muted)">${mob.start_date} → ${mob.end_date} | ${mob.country}${mob.city?' ('+mob.city+')':''} | ${mob.participants} deeln. | ${b.days} dagen${b.courseDays<b.days?` (${b.courseDays} cursusdagen)`:''}</div>
+      <div class="cluster-tags">${goalTags}</div>
     </div>`;
   }).join('');
 }
 
-// ── Export ─────────────────────────────────────────────────
-function openExport() { buildOv(); buildCl(); buildTy(); buildCsv(); document.getElementById('exportBg').style.display = 'flex'; }
-function closeExport() { document.getElementById('exportBg').style.display = 'none'; }
-function switchTab(id, btn) {
-  document.querySelectorAll('.exp-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.exp-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active'); btn.classList.add('active');
-}
-function buildOv() {
-  const sorted = [...mobilities].sort((a, b) => a.start.localeCompare(b.start));
-  const used = mobilities.reduce((s, m) => s + calcBudget(m).total, 0);
-  const rows = sorted.map(m => { const b = calcBudget(m); return `<tr><td>${m.start}</td><td>${m.end}</td><td>${m.title}</td><td>${TYPE_LABEL[m.type]}</td><td>${m.country}${m.city?' – '+m.city:''}</td><td>${m.participants}</td><td style="text-align:right">€${fmt(b.indSupp)}</td><td style="text-align:right">€${fmt(b.mgmt)}</td><td style="text-align:right">€${fmt(b.trav)}</td><td style="text-align:right">€${fmt(b.courseFee)}</td><td style="text-align:right;font-weight:500">€${fmt(b.total)}</td></tr>`; }).join('');
-  document.getElementById('exp-ov').innerHTML = `<div style="margin-bottom:.75rem;font-size:12px;color:#5f5e5a">Budget: €${fmt(TOTAL)} | Gebruikt: €${fmt(used)} | Resterend: €${fmt(TOTAL - used)}</div><div style="overflow-x:auto"><table class="exp-table"><thead><tr><th>Start</th><th>Einde</th><th>Titel</th><th>Type</th><th>Land/stad</th><th>Deeln.</th><th>Ind. steun</th><th>Mgmt fee</th><th>Reissteun</th><th>Cursusbijdr.</th><th>Totaal</th></tr></thead><tbody>${rows || '<tr><td colspan="11">Geen mobilities</td></tr>'}</tbody><tfoot><tr><td colspan="6">Totaal</td><td></td><td></td><td></td><td></td><td style="text-align:right">€${fmt(used)}</td></tr></tfoot></table></div>`;
-}
-function buildCl() {
-  let html = '';
-  CLUSTERS.forEach((cl, ci) => {
-    const mobs = mobilities.filter(m => m.clusters.includes(cl));
-    const total = mobs.reduce((s, m) => s + calcBudget(m).total, 0);
-    const rows = mobs.map(m => { const b = calcBudget(m); return `<tr><td>${m.start} → ${m.end}</td><td>${m.title}</td><td>${TYPE_LABEL[m.type]}</td><td>${m.country}</td><td>${m.participants}</td><td style="text-align:right">€${fmt(b.total)}</td></tr>`; }).join('');
-    html += `<div style="margin-bottom:1.25rem"><div style="font-size:13px;font-weight:500;margin-bottom:.5rem">${ci+1}. ${cl} <span style="font-weight:400;color:#5f5e5a">— €${fmt(total)} | ${mobs.length} mobiliteit${mobs.length !== 1 ? 'en' : ''}</span></div><table class="exp-table"><thead><tr><th>Datum</th><th>Titel</th><th>Type</th><th>Land</th><th>Deeln.</th><th>Budget</th></tr></thead><tbody>${rows || '<tr><td colspan="6">—</td></tr>'}</tbody></table></div>`;
-  });
-  document.getElementById('exp-cl').innerHTML = html;
-}
-function buildTy() {
-  let html = '';
-  ['course','jobshadow','teaching','expert'].forEach(type => {
-    const mobs = mobilities.filter(m => m.type === type);
-    const total = mobs.reduce((s, m) => s + calcBudget(m).total, 0);
-    const rows = mobs.map(m => { const b = calcBudget(m); return `<tr><td>${m.start} → ${m.end}</td><td>${m.title}</td><td>${m.country}</td><td>${m.participants}</td><td style="text-align:right">€${fmt(b.total)}</td></tr>`; }).join('');
-    html += `<div style="margin-bottom:1.25rem"><div style="font-size:13px;font-weight:500;margin-bottom:.5rem">${TYPE_LABEL[type]} <span style="font-weight:400;color:#5f5e5a">— €${fmt(total)} | ${mobs.length} mobiliteit${mobs.length !== 1 ? 'en' : ''}</span></div><table class="exp-table"><thead><tr><th>Datum</th><th>Titel</th><th>Land</th><th>Deeln.</th><th>Budget</th></tr></thead><tbody>${rows || '<tr><td colspan="5">—</td></tr>'}</tbody></table></div>`;
-  });
-  document.getElementById('exp-ty').innerHTML = html;
-}
-function buildCsv() {
-  const sorted = [...mobilities].sort((a, b) => a.start.localeCompare(b.start));
-  const hdr = 'Titel;Type;Startdatum;Einddatum;Totaal dagen;Cursusdagen;Land;Stad;Deelnemers;Afstandsband;Reistype;Ind. steun;Mgmt fee;Reissteun;Cursusbijdrage;Totaal;Clusters;Notities';
-  const rows = sorted.map(m => {
-    const b = calcBudget(m);
-    const cls = m.clusters.map(c => { const i = CLUSTERS.indexOf(c); return i >= 0 ? (i+1)+'. '+c : c; }).join(' | ');
-    return [m.title, TYPE_LABEL[m.type], m.start, m.end, b.days, b.courseDays, m.country, m.city||'', m.participants, m.dist, m.travel==='green'?'Groen':'Standaard', b.indSupp, b.mgmt, b.trav, b.courseFee, Math.round(b.total), cls, m.notes||''].map(v => `"${String(v).replace(/"/g,'""')}"`).join(';');
-  });
-  document.getElementById('csvContent').value = [hdr, ...rows].join('\n');
-}
-function copyCsv() { const el = document.getElementById('csvContent'); el.select(); try { document.execCommand('copy'); toast('Gekopieerd'); } catch(e) { alert('Selecteer handmatig.'); } }
-function downloadCsv() {
-  const blob = new Blob(['\uFEFF' + document.getElementById('csvContent').value], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob), a = document.createElement('a');
-  a.href = url; a.download = 'ka1_mobilities.csv'; a.click(); URL.revokeObjectURL(url);
-}
-function printSec(id) {
-  const w = window.open('', '_blank', 'width=900,height=700');
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>KA1 Export</title><style>body{font-family:Arial,sans-serif;padding:24px;font-size:12px}table{border-collapse:collapse;width:100%}th,td{padding:5px 7px;border:1px solid #ccc;text-align:left}th{background:#f5f5f5;font-weight:600}tfoot td{font-weight:600;border-top:2px solid #999}</style></head><body><h2 style="margin-bottom:1rem">KA1 ADU — Mobilities 2026–2027</h2>${document.getElementById(id).innerHTML}</body></html>`);
-  w.document.close(); w.focus(); setTimeout(() => w.print(), 400);
-}
-
-// ── Instellingen ───────────────────────────────────────────
-function stDomainChange() {
-  const val = document.querySelector('input[name="st-domain"]:checked')?.value;
-  ['ADU','SCH','VET'].forEach(d => {
-    const lbl = document.getElementById('st-lbl-' + d);
-    if (!lbl) return;
-    lbl.style.borderColor = d === val ? '#378ADD' : '#b4b2a9';
-    lbl.style.background  = d === val ? '#EBF4FC' : '';
-  });
-}
-
-function openSettings() {
-  const domain = cfg.domain || 'ADU';
-  // Zet de juiste radio aan
-  const radio = document.querySelector(`input[name="st-domain"][value="${domain}"]`);
-  if (radio) radio.checked = true;
-  stDomainChange();
-  document.getElementById('st-budget').value = cfg.budget || 360000;
-  document.getElementById('st-binid').value  = cfg.binId  || '';
-  document.getElementById('st-apikey').value = cfg.apiKey || '';
-  document.getElementById('st-name').value   = cfg.name   || '';
-  document.getElementById('st-adminpw').value = '';
-  document.getElementById('settingsBg').style.display = 'flex';
-}
-function closeSettings() { document.getElementById('settingsBg').style.display = 'none'; }
-function settingsSave() {
-  const domainRadio = document.querySelector('input[name="st-domain"]:checked');
-  cfg.domain = domainRadio ? domainRadio.value : (cfg.domain || 'ADU');
-  cfg.budget = parseInt(document.getElementById('st-budget').value) || 360000;
-  cfg.binId  = document.getElementById('st-binid').value.trim();
-  cfg.apiKey = document.getElementById('st-apikey').value.trim();
-  cfg.name   = document.getElementById('st-name').value.trim();
-  const pw = document.getElementById('st-adminpw').value.trim();
-  if (pw) cfg.adminPwHash = simpleHash(pw);
-  saveCfg();
-  window.BUDGET_TOTAL = cfg.budget;
-  closeSettings();
-  startApp();
-  toast('Instellingen opgeslagen');
-}
-
-// ── Hulpfuncties ───────────────────────────────────────────
-function simpleHash(str) {
-  let h = 0;
-  for (let i = 0; i < str.length; i++) { h = (Math.imul(31, h) + str.charCodeAt(i)) | 0; }
-  return h.toString(36);
-}
-function toast(msg, err) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.style.background = err ? '#A32D2D' : '#1a1a18';
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2500);
-}
+// ── Init helpers ──────────────────────────────────────────────────────────
 function initCountries() {
   const sel = document.getElementById('f-country');
   sel.innerHTML = '<option value="">-- kies --</option>';
@@ -933,24 +846,89 @@ function initCountries() {
     o.textContent = c + ' (gr.' + COUNTRY_GROUP[c] + ')'; sel.appendChild(o);
   });
 }
-function initClusters() {
-  const wrap = document.getElementById('clusterChecks');
+function initGoalChecks() {
+  const wrap = document.getElementById('goalChecks');
+  const dd = DOMAIN_DATA[currentDomain];
+  document.getElementById('goalLabel').textContent = dd.goalLabel;
   wrap.innerHTML = '';
-  CLUSTERS.forEach((c, i) => {
+  dd.goals.forEach((g, i) => {
     const lbl = document.createElement('label');
-    lbl.innerHTML = `<input type="checkbox" value="${c}"> ${i+1}. ${c}`;
+    lbl.innerHTML = `<input type="checkbox" value="${g}"> ${i+1}. ${g}`;
     wrap.appendChild(lbl);
   });
 }
-function initFilterCluster() {
-  const sel = document.getElementById('filter-cluster');
-  if (!sel) return;
-  sel.innerHTML = '<option value="">Alle clusters</option>';
-  CLUSTERS.forEach((c, i) => {
-    const o = document.createElement('option');
-    o.value = c; o.textContent = (i + 1) + '. ' + c;
-    sel.appendChild(o);
+function initFilterGoal() {
+  const sel = document.getElementById('filter-goal');
+  const dd = DOMAIN_DATA[currentDomain];
+  sel.innerHTML = `<option value="">Alle ${dd.goalLabel.toLowerCase()}</option>`;
+  dd.goals.forEach((g, i) => {
+    const o = document.createElement('option'); o.value = g; o.textContent = (i+1)+'. '+g; sel.appendChild(o);
   });
+}
+
+// ── Export ────────────────────────────────────────────────────────────────
+function openExport() { buildOv(); buildGoal(); buildTy(); buildCsv(); document.getElementById('exportBg').style.display = 'flex'; }
+function closeExport() { document.getElementById('exportBg').style.display = 'none'; }
+function switchExpTab(id, btn) {
+  document.querySelectorAll('.exp-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.exp-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active'); btn.classList.add('active');
+}
+function buildOv() {
+  const sorted = [...mobilities].sort((a,b) => a.start_date.localeCompare(b.start_date));
+  const used = mobilities.reduce((s,m) => s+calcBudget(m).total, 0);
+  const T = budgets[currentDomain] || 0;
+  const rows = sorted.map(m => { const b=calcBudget(m); return `<tr><td>${m.start_date}</td><td>${m.end_date}</td><td>${m.title}</td><td>${TYPE_LABEL[m.type]}</td><td>${m.country}${m.city?' – '+m.city:''}</td><td>${m.participants}</td><td style="text-align:right">€${fmt(b.indSupp)}</td><td style="text-align:right">€${fmt(b.mgmt)}</td><td style="text-align:right">€${fmt(b.trav)}</td><td style="text-align:right">€${fmt(b.courseFee)}</td><td style="text-align:right;font-weight:600">€${fmt(b.total)}</td></tr>`; }).join('');
+  document.getElementById('exp-ov').innerHTML = `<div style="margin-bottom:.75rem;font-size:12px;color:var(--kov-muted)">Budget: €${fmt(T)} | Gebruikt: €${fmt(used)} | Resterend: €${fmt(T-used)}</div><div style="overflow-x:auto"><table class="exp-table"><thead><tr><th>Start</th><th>Einde</th><th>Titel</th><th>Type</th><th>Land/stad</th><th>Deeln.</th><th>Ind. steun</th><th>Mgmt fee</th><th>Reissteun</th><th>Cursusbijdr.</th><th>Totaal</th></tr></thead><tbody>${rows||'<tr><td colspan="11">Geen data</td></tr>'}</tbody><tfoot><tr><td colspan="6">Totaal</td><td></td><td></td><td></td><td></td><td style="text-align:right">€${fmt(used)}</td></tr></tfoot></table></div>`;
+}
+function buildGoal() {
+  const dd = DOMAIN_DATA[currentDomain]; let html = '';
+  dd.goals.forEach((g, gi) => {
+    const mobs = mobilities.filter(m => (m.goals||[]).includes(g));
+    const total = mobs.reduce((s,m) => s+calcBudget(m).total, 0);
+    const rows = mobs.map(m => { const b=calcBudget(m); return `<tr><td>${m.start_date} → ${m.end_date}</td><td>${m.title}</td><td>${TYPE_LABEL[m.type]}</td><td>${m.country}</td><td>${m.participants}</td><td style="text-align:right">€${fmt(b.total)}</td></tr>`; }).join('');
+    html += `<div style="margin-bottom:1.25rem"><div style="font-size:13px;font-weight:600;margin-bottom:.5rem">${gi+1}. ${g} <span style="font-weight:400;color:var(--kov-muted)">— €${fmt(total)} | ${mobs.length} mobiliteit${mobs.length!==1?'en':''}</span></div><table class="exp-table"><thead><tr><th>Datum</th><th>Titel</th><th>Type</th><th>Land</th><th>Deeln.</th><th>Budget</th></tr></thead><tbody>${rows||'<tr><td colspan="6">—</td></tr>'}</tbody></table></div>`;
+  });
+  document.getElementById('exp-goal').innerHTML = html;
+}
+function buildTy() {
+  let html = '';
+  ['course','jobshadow','teaching','expert'].forEach(type => {
+    const mobs = mobilities.filter(m => m.type === type);
+    const total = mobs.reduce((s,m) => s+calcBudget(m).total, 0);
+    const rows = mobs.map(m => { const b=calcBudget(m); return `<tr><td>${m.start_date} → ${m.end_date}</td><td>${m.title}</td><td>${m.country}</td><td>${m.participants}</td><td style="text-align:right">€${fmt(b.total)}</td></tr>`; }).join('');
+    html += `<div style="margin-bottom:1.25rem"><div style="font-size:13px;font-weight:600;margin-bottom:.5rem">${TYPE_LABEL[type]} <span style="font-weight:400;color:var(--kov-muted)">— €${fmt(total)} | ${mobs.length} mobiliteit${mobs.length!==1?'en':''}</span></div><table class="exp-table"><thead><tr><th>Datum</th><th>Titel</th><th>Land</th><th>Deeln.</th><th>Budget</th></tr></thead><tbody>${rows||'<tr><td colspan="5">—</td></tr>'}</tbody></table></div>`;
+  });
+  document.getElementById('exp-ty').innerHTML = html;
+}
+function buildCsv() {
+  const dd = DOMAIN_DATA[currentDomain];
+  const sorted = [...mobilities].sort((a,b) => a.start_date.localeCompare(b.start_date));
+  const hdr = `Titel;Type;Startdatum;Einddatum;Totaal dagen;Cursusdagen;Land;Stad;Deelnemers;Afstandsband;Reistype;Ind. steun;Mgmt fee;Reissteun;Cursusbijdrage;Totaal;${dd.goalLabel};Notities`;
+  const rows = sorted.map(m => {
+    const b = calcBudget(m);
+    const goals = (m.goals||[]).map(g => { const i=dd.goals.indexOf(g); return i>=0?(i+1)+'. '+g:g; }).join(' | ');
+    return [m.title,TYPE_LABEL[m.type],m.start_date,m.end_date,b.days,b.courseDays,m.country,m.city||'',m.participants,m.dist,m.travel==='green'?'Groen':'Standaard',b.indSupp,b.mgmt,b.trav,b.courseFee,Math.round(b.total),goals,m.notes||''].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(';');
+  });
+  document.getElementById('csvContent').value = [hdr,...rows].join('\n');
+}
+function copyCsv() { const el=document.getElementById('csvContent'); el.select(); try{document.execCommand('copy');toast('Gekopieerd');}catch(e){alert('Selecteer handmatig.');} }
+function downloadCsv() {
+  const blob=new Blob(['\uFEFF'+document.getElementById('csvContent').value],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url; a.download=`ka1_${currentDomain}_mobilities.csv`; a.click(); URL.revokeObjectURL(url);
+}
+function printSec(id) {
+  const w=window.open('','_blank','width=960,height=700');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>KA1 Export — ${currentDomain}</title><style>body{font-family:Arial,sans-serif;padding:24px;font-size:12px}h2{color:#6B2D8B;margin-bottom:1rem}table{border-collapse:collapse;width:100%}th,td{padding:5px 7px;border:1px solid #ccc;text-align:left}th{background:#f0efe8;font-weight:600}tfoot td{font-weight:600;border-top:2px solid #999}</style></head><body><h2>KA1 ${currentDomain} — Mobilities 2026–2027</h2>${document.getElementById(id).innerHTML}</body></html>`);
+  w.document.close(); w.focus(); setTimeout(()=>w.print(),400);
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────
+function toast(msg, err) {
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.style.background=err?'var(--kov-danger)':'var(--kov-text)';
+  el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2500);
 }
 </script>
 </body>
