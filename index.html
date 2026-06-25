@@ -292,6 +292,7 @@ textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;pa
 
 <script>
 // ── Constanten ─────────────────────────────────────────────
+const API = 'https://api.jsonbin.io/v3/b/';
 const TOTAL = 360000; // fallback; wordt overschreven door window.BUDGET_TOTAL na login
 function getBudget() { return window.BUDGET_TOTAL || TOTAL; }
 const CLUSTERS = [
@@ -383,7 +384,6 @@ function startApp() {
 }
 
 // ── JSONBin ────────────────────────────────────────────────
-const API = 'https://api.jsonbin.io/v3/b/';
 
 async function loadData() {
   const btn = document.getElementById('refreshBtn');
