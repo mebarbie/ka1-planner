@@ -86,10 +86,41 @@ textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;pa
   <div class="setup-box">
     <h2>KA1 Planner — eerste keer instellen</h2>
     <p>Maak een gratis account op <a href="https://jsonbin.io" target="_blank">jsonbin.io</a>, maak een nieuwe bin aan met inhoud <code>{"mobilities":[]}</code> en kopieer de <strong>Bin ID</strong> en je <strong>API key</strong> hieronder.</p>
+
+    <div class="field">
+      <label>Erasmus+ domein</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px" id="domainPicker">
+        <label style="display:flex;flex-direction:column;align-items:center;border:0.5px solid #b4b2a9;border-radius:8px;padding:.75rem .5rem;cursor:pointer;font-size:13px;font-weight:400;gap:4px;text-align:center" id="lbl-ADU">
+          <input type="radio" name="domain" value="ADU" style="width:auto" onchange="domainChange()" checked>
+          <span style="font-size:22px">🎓</span>
+          <strong>ADU</strong>
+          <span style="font-size:11px;color:#5f5e5a">Adult Education</span>
+        </label>
+        <label style="display:flex;flex-direction:column;align-items:center;border:0.5px solid #b4b2a9;border-radius:8px;padding:.75rem .5rem;cursor:pointer;font-size:13px;font-weight:400;gap:4px;text-align:center" id="lbl-SCH">
+          <input type="radio" name="domain" value="SCH" style="width:auto" onchange="domainChange()">
+          <span style="font-size:22px">🏫</span>
+          <strong>SCH</strong>
+          <span style="font-size:11px;color:#5f5e5a">School Education</span>
+        </label>
+        <label style="display:flex;flex-direction:column;align-items:center;border:0.5px solid #b4b2a9;border-radius:8px;padding:.75rem .5rem;cursor:pointer;font-size:13px;font-weight:400;gap:4px;text-align:center" id="lbl-VET">
+          <input type="radio" name="domain" value="VET" style="width:auto" onchange="domainChange()">
+          <span style="font-size:22px">🔧</span>
+          <strong>VET</strong>
+          <span style="font-size:11px;color:#5f5e5a">Vocational Education & Training</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Toegekend budget voor dit domein (€)</label>
+      <input type="number" id="s-budget" value="360000" min="1" step="1000" placeholder="Bv. 360000">
+      <div style="font-size:11px;color:#5f5e5a;margin-top:3px">Vul het volledige toegekende Erasmus+ budget in voor dit domein.</div>
+    </div>
+
+    <div class="field"><label>Projectnaam (optioneel)</label><input id="s-name" placeholder="KA121-2026 Katholiek Onderwijs Vlaanderen"></div>
     <div class="field"><label>JSONBin Bin ID</label><input id="s-binid" placeholder="64abc123..."></div>
     <div class="field"><label>JSONBin API Key</label><input id="s-apikey" type="password" placeholder="$2b$10$..."></div>
     <div class="field"><label>Beheerderswachtwoord (voor verwijderen)</label><input id="s-adminpw" type="password" placeholder="Kies een wachtwoord"></div>
-    <div class="field"><label>Projectnaam (optioneel)</label><input id="s-name" placeholder="KA121-2026 Katholiek Onderwijs Vlaanderen"></div>
     <button class="primary" onclick="setupSave()" style="width:100%">Opslaan en starten</button>
   </div>
 </div>
@@ -97,7 +128,7 @@ textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;pa
 <div id="app" style="display:none">
 <div class="container">
   <h1 id="appTitle">KA1 ADU — Mobility Planner 2026–2027</h1>
-  <p class="subtitle">Katholiek Onderwijs Vlaanderen · KA121 Adult Education · Budget: €360.000</p>
+  <p class="subtitle" id="appSubtitle">Katholiek Onderwijs Vlaanderen · KA121 Adult Education · Budget: €360.000</p>
 
   <div class="top-bar">
     <button class="primary" onclick="openAdd()">+ Mobiliteit toevoegen</button>
@@ -237,6 +268,15 @@ textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;pa
 <div class="modal">
   <button class="close-x" onclick="closeSettings()">×</button>
   <h2>Instellingen</h2>
+  <div style="margin-bottom:1rem">
+    <label>Erasmus+ domein</label>
+    <select id="st-domain" style="margin-top:3px">
+      <option value="ADU">ADU — Adult Education</option>
+      <option value="SCH">SCH — School Education</option>
+      <option value="VET">VET — Vocational Education & Training</option>
+    </select>
+  </div>
+  <div style="margin-bottom:1rem"><label>Toegekend budget (€)</label><input type="number" id="st-budget" min="1" step="1000"></div>
   <div style="margin-bottom:1rem"><label>JSONBin Bin ID</label><input id="st-binid"></div>
   <div style="margin-bottom:1rem"><label>JSONBin API Key</label><input id="st-apikey" type="password"></div>
   <div style="margin-bottom:1rem"><label>Nieuw beheerderswachtwoord (leeg = ongewijzigd)</label><input id="st-adminpw" type="password"></div>
@@ -252,7 +292,8 @@ textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;pa
 
 <script>
 // ── Constanten ─────────────────────────────────────────────
-const TOTAL = 360000;
+const TOTAL = 360000; // fallback; wordt overschreven door window.BUDGET_TOTAL na login
+function getBudget() { return window.BUDGET_TOTAL || TOTAL; }
 const CLUSTERS = [
   "Brede cursistenbegeleiding en inclusieve didactiek",
   "Arbeidsmarktgericht en geïntegreerd curriculum",
@@ -300,20 +341,40 @@ if (!cfg.binId || !cfg.apiKey) {
   startApp();
 }
 
+function domainChange() {
+  const val = document.querySelector('input[name="domain"]:checked')?.value;
+  ['ADU','SCH','VET'].forEach(d => {
+    const lbl = document.getElementById('lbl-' + d);
+    if (lbl) lbl.style.borderColor = d === val ? '#378ADD' : '#b4b2a9';
+    if (lbl) lbl.style.background  = d === val ? '#EBF4FC' : '';
+  });
+}
+// Initialiseer visuele staat bij laden
+document.addEventListener('DOMContentLoaded', domainChange);
+
 function setupSave() {
   const binId = document.getElementById('s-binid').value.trim();
   const apiKey = document.getElementById('s-apikey').value.trim();
   const adminPw = document.getElementById('s-adminpw').value.trim();
   const name = document.getElementById('s-name').value.trim();
+  const domain = document.getElementById('s-domain').value;
+  const budget = parseInt(document.getElementById('s-budget').value) || 360000;
   if (!binId || !apiKey || !adminPw) { alert('Vul Bin ID, API key en beheerderswachtwoord in.'); return; }
-  cfg = { binId, apiKey, adminPwHash: simpleHash(adminPw), name };
+  cfg = { binId, apiKey, adminPwHash: simpleHash(adminPw), name, domain, budget };
   saveCfg();
   document.getElementById('setupScreen').style.display = 'none';
   startApp();
 }
 
 function startApp() {
-  if (cfg.name) document.getElementById('appTitle').textContent = cfg.name + ' — Mobility Planner 2026–2027';
+  const domain = cfg.domain || 'ADU';
+  const budget = cfg.budget || 360000;
+  const domainLabel = { ADU: 'Adult Education', SCH: 'School Education', VET: 'Vocational Education & Training' }[domain] || domain;
+  const title = cfg.name ? cfg.name : `KA1 ${domain} — Mobility Planner 2026–2027`;
+  document.getElementById('appTitle').textContent = title;
+  document.getElementById('appSubtitle').textContent = `Katholiek Onderwijs Vlaanderen · KA121 ${domainLabel} · Budget: €${budget.toLocaleString('nl-BE')}`;
+  // Stel dynamisch budget in
+  window.BUDGET_TOTAL = budget;
   document.getElementById('app').style.display = 'block';
   initCountries();
   initClusters();
@@ -552,8 +613,9 @@ function render() {
 
   const used = mobilities.reduce((s, m) => s + calcBudget(m).total, 0);
   const filtUsed = filtered.reduce((s, m) => s + calcBudget(m).total, 0);
-  const pctTotal = Math.min(100, (used / TOTAL) * 100);
-  const pctFilt  = Math.min(100, (filtUsed / TOTAL) * 100);
+  const T = getBudget();
+  const pctTotal = Math.min(100, (used / T) * 100);
+  const pctFilt  = Math.min(100, (filtUsed / T) * 100);
 
   // Budgetbalk: toon gefilterd aandeel (blauw) bovenop totaal (grijs)
   if (isFiltered) {
@@ -567,9 +629,9 @@ function render() {
   }
 
   document.getElementById('metrics').innerHTML = `
-    <div class="metric"><div class="metric-label">Totaal budget</div><div class="metric-value">€${fmt(TOTAL)}</div></div>
+    <div class="metric"><div class="metric-label">Totaal budget</div><div class="metric-value">€${fmt(T)}</div></div>
     <div class="metric"><div class="metric-label">Gebruikt${isFiltered ? ' (totaal)' : ''}</div><div class="metric-value ${pctTotal > 90 ? 'danger' : ''}">€${fmt(used)}</div></div>
-    <div class="metric"><div class="metric-label">Resterend</div><div class="metric-value ${(TOTAL - used) < 0 ? 'danger' : 'success'}">€${fmt(TOTAL - used)}</div></div>
+    <div class="metric"><div class="metric-label">Resterend</div><div class="metric-value ${(T - used) < 0 ? 'danger' : 'success'}">€${fmt(T - used)}</div></div>
     ${isFiltered ? `
     <div class="metric" style="border:0.5px solid #378ADD">
       <div class="metric-label" style="color:#185FA5">Gebruikt (filter)</div>
@@ -748,6 +810,8 @@ function printSec(id) {
 
 // ── Instellingen ───────────────────────────────────────────
 function openSettings() {
+  document.getElementById('st-domain').value = cfg.domain || 'ADU';
+  document.getElementById('st-budget').value = cfg.budget || 360000;
   document.getElementById('st-binid').value = cfg.binId || '';
   document.getElementById('st-apikey').value = cfg.apiKey || '';
   document.getElementById('st-name').value = cfg.name || '';
@@ -756,14 +820,18 @@ function openSettings() {
 }
 function closeSettings() { document.getElementById('settingsBg').style.display = 'none'; }
 function settingsSave() {
-  cfg.binId = document.getElementById('st-binid').value.trim();
+  cfg.domain = document.getElementById('st-domain').value;
+  cfg.budget = parseInt(document.getElementById('st-budget').value) || 360000;
+  cfg.binId  = document.getElementById('st-binid').value.trim();
   cfg.apiKey = document.getElementById('st-apikey').value.trim();
-  cfg.name = document.getElementById('st-name').value.trim();
+  cfg.name   = document.getElementById('st-name').value.trim();
   const pw = document.getElementById('st-adminpw').value.trim();
   if (pw) cfg.adminPwHash = simpleHash(pw);
   saveCfg();
-  if (cfg.name) document.getElementById('appTitle').textContent = cfg.name + ' — Mobility Planner 2026–2027';
-  closeSettings(); toast('Instellingen opgeslagen');
+  window.BUDGET_TOTAL = cfg.budget;
+  startApp();
+  closeSettings();
+  toast('Instellingen opgeslagen');
 }
 
 // ── Hulpfuncties ───────────────────────────────────────────
