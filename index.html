@@ -633,6 +633,9 @@ function openAdd() {
   document.getElementById('f-travel').value = 'standard'; document.getElementById('f-participants').value = '1';
   document.querySelectorAll('#goalChecks input').forEach(c => c.checked = false);
   document.getElementById('budgetPreview').innerHTML = '<strong>Geschat budget</strong>: vul formulier in';
+  // Zorg dat landen altijd ingeladen zijn
+  if (document.getElementById('f-country').options.length <= 1) initCountries();
+  if (document.getElementById('goalChecks').children.length === 0) initGoalChecks();
   updateMgmt();
   document.getElementById('mobModalBg').style.display = 'flex';
 }
@@ -840,10 +843,13 @@ function renderList(subset) {
 // ── Init helpers ──────────────────────────────────────────────────────────
 function initCountries() {
   const sel = document.getElementById('f-country');
+  if (!sel) return;
   sel.innerHTML = '<option value="">-- kies --</option>';
   Object.keys(COUNTRY_GROUP).sort().forEach(c => {
-    const o = document.createElement('option'); o.value = c;
-    o.textContent = c + ' (gr.' + COUNTRY_GROUP[c] + ')'; sel.appendChild(o);
+    const o = document.createElement('option');
+    o.value = c;
+    o.textContent = c + ' (gr.' + COUNTRY_GROUP[c] + ')';
+    sel.appendChild(o);
   });
 }
 function initGoalChecks() {
