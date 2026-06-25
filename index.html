@@ -324,14 +324,45 @@ textarea.csv-out{width:100%;height:140px;font-size:11px;font-family:monospace;pa
 const API = 'https://api.jsonbin.io/v3/b/';
 const TOTAL = 360000; // fallback; wordt overschreven door window.BUDGET_TOTAL na login
 function getBudget() { return window.BUDGET_TOTAL || TOTAL; }
-const CLUSTERS = [
-  "Brede cursistenbegeleiding en inclusieve didactiek",
-  "Arbeidsmarktgericht en geïntegreerd curriculum",
-  "AI, evaluatie en digitale transformatie",
-  "Datagedreven beleid en kwaliteitszorg",
-  "Leiderschap, projectmanagement en veranderkracht",
-  "Duurzaamheid en green skills"
-];
+// ── Domeindata ─────────────────────────────────────────────
+const DOMAIN_DATA = {
+  ADU: {
+    label: 'Adult Education',
+    clusters: [
+      "Brede cursistenbegeleiding en inclusieve didactiek",
+      "Arbeidsmarktgericht en geïntegreerd curriculum",
+      "AI, evaluatie en digitale transformatie",
+      "Datagedreven beleid en kwaliteitszorg",
+      "Leiderschap, projectmanagement en veranderkracht",
+      "Duurzaamheid en green skills"
+    ]
+  },
+  SCH: {
+    label: 'School Education',
+    clusters: [
+      "Taalonderwijs en meertaligheid",
+      "Digitalisering en mediawijsheid",
+      "Inclusief onderwijs en diversiteit",
+      "STEM en innovatieve didactiek",
+      "Schoolleiderschap en professionalisering",
+      "Duurzaamheid en burgerschapsvorming"
+    ]
+  },
+  VET: {
+    label: 'Vocational Education & Training',
+    clusters: [
+      "Arbeidsmarktrelevantie en sectorpartnerships",
+      "Digitale en groene vaardigheden",
+      "WBL en duale leertrajecten",
+      "Inclusie en kwetsbare doelgroepen",
+      "Kwaliteitszorg en EQF-afstemming",
+      "Internationalisering en Europese samenwerking"
+    ]
+  }
+};
+
+// Actieve clusters (worden ingesteld bij startApp)
+let CLUSTERS = DOMAIN_DATA.ADU.clusters;
 const COUNTRY_GROUP = {
   "België":1,"Bulgarije":3,"Cyprus":2,"Denemarken":1,"Duitsland":1,"Estland":2,
   "Finland":1,"Frankrijk":1,"Griekenland":2,"Hongarije":3,"Ierland":1,"IJsland":1,
@@ -398,14 +429,18 @@ function setupSave() {
 
 function startApp() {
   const domain = cfg.domain || 'ADU';
-  const budget = cfg.budget || 360000;
-  const domainLabel = { ADU: 'Adult Education', SCH: 'School Education', VET: 'Vocational Education & Training' }[domain] || domain;
+  const domainInfo = DOMAIN_DATA[domain] || DOMAIN_DATA.ADU;
+  CLUSTERS = domainInfo.clusters;
+  window.BUDGET_TOTAL = cfg.budget || 360000;
+
   const title = cfg.name ? cfg.name : `KA1 ${domain} — Mobility Planner 2026–2027`;
   document.getElementById('appTitle').textContent = title;
-  document.getElementById('appSubtitle').textContent = `Katholiek Onderwijs Vlaanderen · KA121 ${domainLabel} · Budget: €${budget.toLocaleString('nl-BE')}`;
-  // Stel dynamisch budget in
-  window.BUDGET_TOTAL = budget;
+  document.getElementById('appSubtitle').textContent =
+    `Katholiek Onderwijs Vlaanderen · KA121 ${domainInfo.label} · Budget: €${(cfg.budget || 360000).toLocaleString('nl-BE')}`;
+
   document.getElementById('app').style.display = 'block';
+
+  // Herinitialiseer landen, clusters en mgmt (bij domeinwissel)
   initCountries();
   initClusters();
   updateMgmt();
@@ -619,7 +654,6 @@ function initFilterCluster() {
 }
 
 function render() {
-  initFilterCluster();
   const { cluster, type } = activeFilters();
   const filtered = filteredMobs();
   const isFiltered = cluster || type;
@@ -893,6 +927,7 @@ function toast(msg, err) {
 }
 function initCountries() {
   const sel = document.getElementById('f-country');
+  sel.innerHTML = '<option value="">-- kies --</option>';
   Object.keys(COUNTRY_GROUP).sort().forEach(c => {
     const o = document.createElement('option'); o.value = c;
     o.textContent = c + ' (gr.' + COUNTRY_GROUP[c] + ')'; sel.appendChild(o);
@@ -900,10 +935,21 @@ function initCountries() {
 }
 function initClusters() {
   const wrap = document.getElementById('clusterChecks');
+  wrap.innerHTML = '';
   CLUSTERS.forEach((c, i) => {
     const lbl = document.createElement('label');
     lbl.innerHTML = `<input type="checkbox" value="${c}"> ${i+1}. ${c}`;
     wrap.appendChild(lbl);
+  });
+}
+function initFilterCluster() {
+  const sel = document.getElementById('filter-cluster');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Alle clusters</option>';
+  CLUSTERS.forEach((c, i) => {
+    const o = document.createElement('option');
+    o.value = c; o.textContent = (i + 1) + '. ' + c;
+    sel.appendChild(o);
   });
 }
 </script>
